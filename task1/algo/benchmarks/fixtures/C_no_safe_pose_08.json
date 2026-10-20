@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "fixture_id": "C_no_safe_pose_08",
+  "family": "C_edge",
+  "n_obstacles": 8,
+  "expect": "infeasible",
+  "tags": [
+    "unreachable",
+    "no_safe_viewing_pose",
+    "large"
+  ],
+  "requires_alternatives": false,
+  "description": "Seven spread obstacles plus one (image face N on the top wall) with no safe viewing pose: no complete 8-obstacle route can exist. For measuring failure behaviour of future implementations; the old search must not be run on it.",
+  "verification": "Static: every candidate viewing pose of obstacle 8 is unsafe (checked by tests). Planner behaviour not established.",
+  "coordinate_units": "cm",
+  "start": {
+    "x": 20,
+    "y": 10,
+    "heading_deg": 90
+  },
+  "obstacles": [
+    {
+      "id": 1,
+      "x": 30,
+      "y": 100,
+      "face": "S"
+    },
+    {
+      "id": 2,
+      "x": 100,
+      "y": 20,
+      "face": "W"
+    },
+    {
+      "id": 3,
+      "x": 130,
+      "y": 50,
+      "face": "W"
+    },
+    {
+      "id": 4,
+      "x": 80,
+      "y": 160,
+      "face": "E"
+    },
+    {
+      "id": 5,
+      "x": 150,
+      "y": 140,
+      "face": "S"
+    },
+    {
+      "id": 6,
+      "x": 170,
+      "y": 90,
+      "face": "N"
+    },
+    {
+      "id": 7,
+      "x": 20,
+      "y": 150,
+      "face": "E"
+    },
+    {
+      "id": 8,
+      "x": 100,
+      "y": 190,
+      "face": "N"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+__pycache__/
+*.pyc
+*.exe
+*.o
+.venv/
+# STM32CubeIDE output and generated vendor code
+**/stm/Debug/
+**/stm/Release/
+**/stm/Drivers/
+**/stm/Middlewares/
+# Android
+**/android/build/
+**/android/app/build/
+**/android/.gradle/
+**/android/.idea/
+**/android/local.properties
+# Model weights and datasets
+*.pt
+*.onnx
+*.param
+*.bin

@@ -1,0 +1,24 @@
+RIGHT IR SENSOR CALIBRATION - provisional (2026-10-12)
+Excluded run 20261012T073006Z_ae171c (100 records, wrong 25 cm label).
+Remaining: 2000 records, 20 unique distances, 100 per group.
+Fit uses only 10-40 cm (15 distance medians), separately excludes 5-9 cm.
+Recommended provisional conversion distance_cm = 32831.45 / (ADC_R - 94.6824) - 1.02464
+R2=0.99981307 RMSE=0.1188 cm MaxAbs=0.2809 cm (in-sample medians)
+Do not extrapolate below 10 cm or above 40 cm without more tests; specified module range is 10-80 cm.
+Per-distance median results:
+ distance_cm   median    std  median_error_cm
+          10 3063.000 42.185            0.036
+          11 2847.000 36.538           -0.096
+          12 2622.500 35.413           -0.037
+          13 2443.500 35.127           -0.047
+          14 2284.000 36.774           -0.028
+          15 2146.000 38.822           -0.020
+          16 2010.000 27.220            0.117
+          17 1911.000 36.197            0.051
+          18 1823.000 33.253           -0.028
+          19 1728.000 56.956            0.076
+          20 1637.500 40.472            0.256
+          25 1370.000 31.897           -0.281
+          30 1152.000 35.872            0.027
+          35 1009.500 39.200           -0.136
+          40  893.000 38.466            0.101

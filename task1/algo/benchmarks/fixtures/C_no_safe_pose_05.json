@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "fixture_id": "C_no_safe_pose_05",
+  "family": "C_edge",
+  "n_obstacles": 5,
+  "expect": "infeasible",
+  "tags": [
+    "unreachable",
+    "no_safe_viewing_pose"
+  ],
+  "requires_alternatives": false,
+  "description": "Four spread obstacles plus one (image face N on the top wall) with no safe viewing pose at all, primary or alternative: no complete 5-obstacle route can exist.",
+  "verification": "Static: every candidate viewing pose of obstacle 5 is unsafe (checked by tests). Planner behaviour not established.",
+  "coordinate_units": "cm",
+  "start": {
+    "x": 20,
+    "y": 10,
+    "heading_deg": 90
+  },
+  "obstacles": [
+    {
+      "id": 1,
+      "x": 30,
+      "y": 100,
+      "face": "S"
+    },
+    {
+      "id": 2,
+      "x": 100,
+      "y": 20,
+      "face": "W"
+    },
+    {
+      "id": 3,
+      "x": 130,
+      "y": 50,
+      "face": "W"
+    },
+    {
+      "id": 4,
+      "x": 80,
+      "y": 160,
+      "face": "E"
+    },
+    {
+      "id": 5,
+      "x": 100,
+      "y": 190,
+      "face": "N"
+    }
+  ]
+}

@@ -1,0 +1,504 @@
+:root {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+  color: #172033;
+  background: #eef2f7;
+  font-synthesis: none;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+button, input, select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.app {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(520px, 1fr) 390px;
+  gap: 18px;
+  padding: 18px;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #dbe1ea;
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(18, 31, 53, 0.06);
+}
+
+.map-card {
+  min-width: 0;
+  /* Top-align instead of stretching to the (taller) sidebar, which used to
+     centre the arena far down the page. */
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  padding: 18px;
+}
+
+/* Keep the arena in view while scrolling the sidebar, but only when the
+   whole card fits in the viewport (a sticky card taller than the window
+   would have its bottom cut off) and the layout is two-column. */
+@media (min-width: 1051px) and (min-height: 860px) {
+  .map-card {
+    position: sticky;
+    top: 18px;
+  }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+h1, h2, h3, p { margin-top: 0; }
+h1 { margin-bottom: 4px; font-size: 22px; }
+h2 { font-size: 15px; margin-bottom: 10px; }
+h3 { font-size: 13px; margin-bottom: 7px; }
+
+.muted {
+  color: #687386;
+  font-size: 13px;
+}
+
+.badge {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #edf1f7;
+  color: #566174;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.badge.ok {
+  background: #e8f6ee;
+  color: #217346;
+}
+
+.badge.error {
+  background: #fdecec;
+  color: #a83232;
+}
+
+.map-wrap {
+  flex: 1;
+  min-height: 560px;
+  display: grid;
+  place-items: center;
+  background: #f7f9fc;
+  border: 1px solid #e0e5ed;
+  border-radius: 12px;
+  overflow: hidden;
+  padding: 14px;
+}
+
+#map {
+  width: min(78vh, 100%);
+  max-width: 720px;
+  aspect-ratio: 1;
+  display: block;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+.panel {
+  padding: 15px;
+}
+
+.row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.row > * {
+  flex: 1;
+}
+
+button {
+  border: 1px solid #cfd6e2;
+  background: #fff;
+  color: #172033;
+  border-radius: 8px;
+  padding: 9px 11px;
+  font-weight: 650;
+}
+
+button:hover:not(:disabled) {
+  background: #f5f7fa;
+}
+
+button.primary {
+  background: #1f5eff;
+  border-color: #1f5eff;
+  color: white;
+}
+
+button.primary:hover:not(:disabled) {
+  background: #174bd4;
+}
+
+button.danger {
+  color: #a83232;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: .48;
+}
+
+label {
+  display: block;
+  color: #657084;
+  font-size: 12px;
+  font-weight: 650;
+  margin-bottom: 4px;
+}
+
+input, select {
+  width: 100%;
+  border: 1px solid #cfd6e2;
+  border-radius: 8px;
+  padding: 8px 9px;
+  background: #fff;
+  color: #172033;
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.start-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.25fr;
+  gap: 8px;
+}
+
+.face-buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.face-buttons button.selected {
+  border-color: #1f5eff;
+  background: #eaf0ff;
+  color: #1649c2;
+}
+
+#engineButtons button.selected {
+  border-color: #1f5eff;
+  background: #eaf0ff;
+  color: #1649c2;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #172033;
+  font-weight: 500;
+}
+
+.checkbox-row input {
+  width: auto;
+}
+
+.warning {
+  padding: 9px 10px;
+  background: #fff7e6;
+  border: 1px solid #f3d38a;
+  border-radius: 8px;
+  color: #8a5a00;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.obstacle-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 160px;
+  overflow: auto;
+}
+
+.obstacle-item {
+  display: grid;
+  grid-template-columns: 34px 1fr auto;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid #e0e5ed;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.obstacle-id {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  background: #25334d;
+  color: white;
+  font-weight: 750;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.stat {
+  padding: 9px;
+  border: 1px solid #e0e5ed;
+  border-radius: 8px;
+}
+
+.stat .value {
+  font-weight: 750;
+  font-size: 16px;
+}
+
+.stat .label {
+  margin: 0;
+}
+
+.route {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.route-step {
+  width: 31px;
+  height: 31px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid #cfd6e2;
+  color: #536075;
+  font-weight: 750;
+  font-size: 12px;
+}
+
+.route-step.current {
+  background: #1f5eff;
+  color: white;
+  border-color: #1f5eff;
+}
+
+.route-step.done {
+  background: #e8f6ee;
+  color: #217346;
+  border-color: #b9dfc8;
+}
+
+.commands {
+  max-height: 170px;
+  overflow: auto;
+  border: 1px solid #e0e5ed;
+  border-radius: 8px;
+}
+
+.command {
+  display: flex;
+  justify-content: space-between;
+  padding: 7px 9px;
+  border-bottom: 1px solid #edf0f4;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+}
+
+.command:last-child { border-bottom: 0; }
+.command.snap { color: #217346; font-weight: 700; }
+.command.active { background: #fff7e6; }
+.command.done { color: #8a94a6; }
+
+.timeline {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 9px;
+}
+
+input[type="range"] {
+  padding: 0;
+}
+
+.help {
+  padding: 9px 10px;
+  background: #f5f7fa;
+  border-radius: 8px;
+  color: #667085;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.error {
+  color: #a83232;
+  background: #fdecec;
+  border-radius: 8px;
+  padding: 9px 10px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+/* Automatic page (/) */
+.version-row + .version-row { margin-top: 12px; }
+.version-label { font-size: 12px; font-weight: 700; color: #566174; margin-bottom: 6px; }
+.version-circles { display: flex; gap: 10px; }
+.version-text { margin-top: 6px; }
+.vcircle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #c3ccda;
+  background: #fff;
+  color: #8a95a8;
+  font-size: 13px;
+  font-weight: 800;
+}
+.vcircle.on-v1 { background: #e08a00; border-color: #b36b00; color: #fff; }
+.vcircle.on-v2 { background: #217346; border-color: #185a36; color: #fff; }
+#versionWarning { margin-top: 10px; }
+
+.plan-status {
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.plan-status.error-text { color: #a83232; }
+
+.result-label {
+  font-weight: 750;
+  font-size: 13px;
+  color: #217346;
+  margin-bottom: 6px;
+}
+
+.failure-backend { margin-top: 4px; }
+
+#startProblem, #startNote, #externalNote { margin-top: 8px; }
+
+.obstacle-item-auto {
+  grid-template-columns: 1fr auto;
+  padding: 4px 6px;
+}
+
+.obstacle-item-auto.selected {
+  border-color: #f59e0b;
+  background: #fff7e6;
+}
+
+.obstacle-select {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  background: transparent;
+  padding: 2px;
+  text-align: left;
+  font-size: 13px;
+}
+
+.commands-static { max-height: 260px; }
+
+/* Camera gallery (display only): one tile per obstacle photo. */
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 8px;
+}
+
+.gallery:empty { display: none; }
+
+.gallery-tile { margin: 0; }
+
+.gallery-img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  background: #e7ebf1;
+  border: 1px solid #d3dae6;
+  border-radius: 8px;
+}
+
+.gallery-tile figcaption {
+  margin-top: 3px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #3a4a6b;
+  text-align: center;
+}
+
+.setup-header {
+  padding: 7px 9px;
+  background: #eef3ff;
+  border-bottom: 1px solid #d3def7;
+  color: #3a4a6b;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.setup-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 7px 9px;
+  background: #f6f8ff;
+  border-bottom: 1px solid #e3e9f8;
+  color: #1f4fcf;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+@media (max-width: 1050px) {
+  .app {
+    grid-template-columns: 1fr;
+  }
+
+  .map-wrap {
+    min-height: auto;
+  }
+
+  /* Size to the card, not the viewport: 90vw is wider than the card's
+     content box on narrow screens and clipped the arena's right edge. */
+  #map {
+    width: min(100%, 720px);
+  }
+}

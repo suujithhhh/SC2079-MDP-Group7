@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MDP Path Planner</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <main class="app">
+      <section class="card map-card">
+        <div class="header">
+          <div>
+            <h1>MDP Path Planner</h1>
+            <p class="muted">20 x 20 grid · 200 x 200 cm arena</p>
+          </div>
+          <div id="status" class="badge">Ready</div>
+        </div>
+
+        <div class="map-wrap">
+          <svg
+            id="map"
+            viewBox="0 0 1000 1000"
+            role="img"
+            aria-label="MDP arena map"
+          ></svg>
+        </div>
+      </section>
+
+      <aside class="sidebar">
+        <section class="card panel">
+          <h2>Planner engine</h2>
+          <div class="controls" id="engineButtons">
+            <button data-engine="v1" class="selected">Legacy v1</button>
+            <button data-engine="v2">Bounded v2 (1–8)</button>
+          </div>
+
+          <div data-engine-panel="v2" class="warning" style="margin-top: 9px">
+            <strong>Experimental integration.</strong> Bounded protocol v2
+            accepts 1–8 obstacles and returns either a complete verified STM
+            command batch or a clear failure within the server-owned request
+            window. The tested 6–8 obstacle cases passed; one four-obstacle
+            fixture still failed to find a route within the planning budget.
+            This page previews commands only—the RPi still owns execution.
+          </div>
+
+          <div data-engine-panel="v2" class="row" style="margin-top: 9px">
+            <label class="checkbox-row" for="allowAlternativeViewing">
+              <input id="allowAlternativeViewing" type="checkbox" />
+              Allow alternative viewing poses (slower; default off)
+            </label>
+          </div>
+
+          <div data-engine-panel="v2" class="help" style="margin-top: 9px">
+            Preview mission ID (dev/preview only, never the RPi-assigned
+            ID): <code id="missionIdReadout">—</code>
+            <br />
+            Planning status: <span id="planningStatusBadge" class="badge">idle</span>
+          </div>
+        </section>
+
+        <section class="card panel">
+          <h2>Start pose</h2>
+          <p class="help" style="margin: 0 0 8px">
+            Robot rear reference (rear-axle midpoint), in grid cells of 10 cm.
+            Not the robot centre or footprint corner.
+          </p>
+          <div class="start-grid">
+            <div>
+              <label for="startX">Rear ref X cell</label>
+              <input id="startX" type="number" min="0" max="19" value="2" />
+            </div>
+            <div>
+              <label for="startY">Rear ref Y cell</label>
+              <input id="startY" type="number" min="0" max="19" value="1" />
+            </div>
+            <div>
+              <label for="startHeading">Heading</label>
+              <select id="startHeading">
+                <option value="N" selected>North</option>
+                <option value="E">East</option>
+                <option value="S">South</option>
+                <option value="W">West</option>
+              </select>
+            </div>
+          </div>
+          <button id="setStart" style="margin-top: 8px; width: 100%">
+            Set start
+          </button>
+        </section>
+
+        <section class="card panel">
+          <h2>Obstacles <span class="muted" id="obstacleCount">0 / 5</span></h2>
+          <div class="help" style="margin-bottom: 9px">
+            Select the image-facing side, then click an empty grid cell.
+            Coordinates are 10 cm grid cells.
+          </div>
+          <div class="face-buttons">
+            <button data-face="N" class="selected">N</button>
+            <button data-face="E">E</button>
+            <button data-face="S">S</button>
+            <button data-face="W">W</button>
+          </div>
+          <div
+            id="obstacles"
+            class="obstacle-list"
+            style="margin-top: 9px"
+          ></div>
+          <button
+            id="deleteAll"
+            class="danger"
+            style="margin-top: 9px; width: 100%"
+          >
+            Clear map
+          </button>
+        </section>
+
+        <section class="card panel">
+          <h2>Planner</h2>
+          <div class="controls">
+            <button id="runB2" class="primary">Run B2</button>
+            <button id="runB3" class="primary">Run B3</button>
+          </div>
+          <div id="resultMessage" class="help" style="margin-top: 9px">
+            Configure obstacles and run the planner.
+          </div>
+        </section>
+
+        <section class="card panel">
+          <h2>Route</h2>
+          <div class="stats">
+            <div class="stat">
+              <div class="label">Mode</div>
+              <div id="mode" class="value">B3</div>
+            </div>
+            <div class="stat" data-engine-panel="v1">
+              <div class="label">Estimated time</div>
+              <div id="time" class="value">—</div>
+            </div>
+            <div class="stat" data-engine-panel="v2">
+              <div class="label">Total cost</div>
+              <div id="totalCost" class="value">—</div>
+            </div>
+            <div class="stat">
+              <div id="visitedLabel" class="label">Visited</div>
+              <div id="visited" class="value">0 / 0</div>
+            </div>
+            <div class="stat">
+              <div class="label">Path distance</div>
+              <div id="distance" class="value">—</div>
+            </div>
+          </div>
+
+          <h3 style="margin-top: 12px">Obstacle order</h3>
+          <div id="route" class="route"></div>
+
+          <h3 style="margin-top: 12px">Robot pose (planner-estimated)</h3>
+          <div id="pose" class="help">
+            x 20.0 cm · y 20.0 cm · heading 90.0°
+          </div>
+        </section>
+
+        <section class="card panel">
+          <h2>Plan preview</h2>
+          <p class="help" style="margin: 0 0 8px">
+            Local scrub through the planner's own estimated/dead-reckoned
+            poses. Not a live robot position — no execution exists yet.
+          </p>
+          <div class="timeline">
+            <button id="previous" title="Previous step">←</button>
+            <input id="timeline" type="range" min="0" max="0" value="0" />
+            <button id="next" title="Next step">→</button>
+          </div>
+          <div class="row" style="margin-top: 8px">
+            <button id="play" class="primary">Play</button>
+            <button id="resetAnimation">Reset</button>
+            <select id="speed">
+              <option value="0.5">0.5x</option>
+              <option value="1" selected>1x</option>
+              <option value="2">2x</option>
+              <option value="4">4x</option>
+            </select>
+          </div>
+          <div class="muted" style="margin-top: 7px; text-align: center">
+            Step <span id="step">0 / 0</span>
+          </div>
+        </section>
+
+        <section class="card panel">
+          <h2>Mission actions</h2>
+          <div id="commands" class="commands">
+            <div class="muted" style="padding: 9px">No commands.</div>
+          </div>
+          <div data-engine-panel="v2" class="row" style="margin-top: 9px">
+            <button id="copyActions">Copy actions JSON</button>
+            <button id="downloadActions">Download actions JSON</button>
+          </div>
+        </section>
+      </aside>
+    </main>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

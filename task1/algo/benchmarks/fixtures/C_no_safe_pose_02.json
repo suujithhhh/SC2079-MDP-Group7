@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "fixture_id": "C_no_safe_pose_02",
+  "family": "C_edge",
+  "n_obstacles": 2,
+  "expect": "infeasible",
+  "tags": [
+    "unreachable",
+    "no_safe_viewing_pose"
+  ],
+  "requires_alternatives": false,
+  "description": "Obstacle 2 (top wall, image face N) has no safe viewing pose at all, primary or alternative: no complete route can exist.",
+  "verification": "Static: every candidate viewing pose of obstacle 2 is unsafe (checked by tests). Measured when created (real pipeline, B2, alternatives off): no route, found in well under a second.",
+  "coordinate_units": "cm",
+  "start": {
+    "x": 20,
+    "y": 10,
+    "heading_deg": 90
+  },
+  "obstacles": [
+    {
+      "id": 1,
+      "x": 30,
+      "y": 100,
+      "face": "S"
+    },
+    {
+      "id": 2,
+      "x": 100,
+      "y": 190,
+      "face": "N"
+    }
+  ]
+}

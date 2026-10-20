@@ -1,0 +1,9 @@
+
+# Retired local regression scratch directories
+/.regression_*/
+
+# Local repository/archive snapshots
+/.zip
+
+# Host-built test executables
+/tests/**/*.exe

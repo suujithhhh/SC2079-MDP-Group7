@@ -1,0 +1,14 @@
+{
+  "type": "PLAN_REQUEST",
+  "protocol_version": 1,
+  "mode": "B2",
+  "coordinate_units": "grid",
+  "start": {"x": 2, "y": 1, "heading": "N"},
+  "obstacles": [
+    {"id": 1, "x": 6, "y": 10, "face": "N"},
+    {"id": 2, "x": 13, "y": 5, "face": "W"},
+    {"id": 3, "x": 15, "y": 14, "face": "S"},
+    {"id": 4, "x": 8, "y": 16, "face": "E"},
+    {"id": 5, "x": 4, "y": 7, "face": "N"}
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "fixture_id": "B_clutter_08",
+  "family": "B_clutter",
+  "n_obstacles": 8,
+  "expect": "feasible",
+  "tags": [
+    "clutter",
+    "cluster_detours"
+  ],
+  "requires_alternatives": false,
+  "description": "Cluttered 8-obstacle layout: four obstacles in a central cross facing outward (detours around the cluster), plus obstacles near the walls.",
+  "verification": "Primary viewing poses statically safe (checked by tests). Planner behaviour not established.",
+  "coordinate_units": "cm",
+  "start": {
+    "x": 20,
+    "y": 10,
+    "heading_deg": 90
+  },
+  "obstacles": [
+    {
+      "id": 1,
+      "x": 80,
+      "y": 100,
+      "face": "W"
+    },
+    {
+      "id": 2,
+      "x": 120,
+      "y": 100,
+      "face": "E"
+    },
+    {
+      "id": 3,
+      "x": 100,
+      "y": 120,
+      "face": "N"
+    },
+    {
+      "id": 4,
+      "x": 100,
+      "y": 80,
+      "face": "S"
+    },
+    {
+      "id": 5,
+      "x": 10,
+      "y": 150,
+      "face": "E"
+    },
+    {
+      "id": 6,
+      "x": 170,
+      "y": 30,
+      "face": "W"
+    },
+    {
+      "id": 7,
+      "x": 170,
+      "y": 170,
+      "face": "W"
+    },
+    {
+      "id": 8,
+      "x": 40,
+      "y": 180,
+      "face": "S"
+    }
+  ]
+}

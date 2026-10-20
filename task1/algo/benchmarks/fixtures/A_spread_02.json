@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "fixture_id": "A_spread_02",
+  "family": "A_spread",
+  "n_obstacles": 2,
+  "expect": "feasible",
+  "tags": [
+    "spread",
+    "nested_prefix"
+  ],
+  "requires_alternatives": false,
+  "description": "Well-spread layout, first 2 of one 8-obstacle arrangement (nested prefixes). The first three are chosen so the real pipeline completes them in seconds.",
+  "verification": "Primary viewing poses statically safe (checked by tests). Planner behaviour measured, not assumed; see the benchmark README.",
+  "coordinate_units": "cm",
+  "start": {
+    "x": 20,
+    "y": 10,
+    "heading_deg": 90
+  },
+  "obstacles": [
+    {
+      "id": 1,
+      "x": 30,
+      "y": 100,
+      "face": "S"
+    },
+    {
+      "id": 2,
+      "x": 100,
+      "y": 20,
+      "face": "W"
+    }
+  ]
+}

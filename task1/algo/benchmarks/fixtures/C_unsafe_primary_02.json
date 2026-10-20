@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "fixture_id": "C_unsafe_primary_02",
+  "family": "C_edge",
+  "n_obstacles": 2,
+  "expect": "feasible",
+  "tags": [
+    "unsafe_primary",
+    "needs_alternatives"
+  ],
+  "requires_alternatives": true,
+  "description": "Obstacle 1 has an UNSAFE primary viewing pose (obstacle 2 clips its footprint) but exactly one safe lateral alternative. Needs allow_alternative_viewing=True.",
+  "verification": "Static: primary viewing pose of obstacle 1 unsafe, exactly one alternative safe (checked by tests). Measured when created (real pipeline, B2): no route with alternatives off, a complete route (order 1,2) with alternatives on.",
+  "coordinate_units": "cm",
+  "start": {
+    "x": 20,
+    "y": 10,
+    "heading_deg": 90
+  },
+  "obstacles": [
+    {
+      "id": 1,
+      "x": 30,
+      "y": 100,
+      "face": "S"
+    },
+    {
+      "id": 2,
+      "x": 15,
+      "y": 70,
+      "face": "E"
+    }
+  ]
+}

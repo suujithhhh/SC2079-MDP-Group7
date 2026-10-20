@@ -1,0 +1,21 @@
+{
+  "type": "PLAN_REQUEST",
+  "protocol_version": 1,
+  "mode": "B3",
+  "coordinate_units": "grid",
+  "start": {
+    "x": 2,
+    "y": 1,
+    "heading": "N"
+  },
+  "obstacles": [
+    { "id": 1, "x": 2,  "y": 9, "face": "S" },
+    { "id": 2, "x": 4,  "y": 9, "face": "S" },
+    { "id": 3, "x": 6,  "y": 9, "face": "S" },
+    { "id": 4, "x": 8,  "y": 9, "face": "S" },
+    { "id": 5, "x": 10, "y": 9, "face": "S" },
+    { "id": 6, "x": 12, "y": 9, "face": "S" },
+    { "id": 7, "x": 14, "y": 9, "face": "S" },
+    { "id": 8, "x": 16, "y": 9, "face": "S" }
+  ]
+}

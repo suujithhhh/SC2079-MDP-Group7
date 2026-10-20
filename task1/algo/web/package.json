@@ -1,0 +1,8 @@
+{
+  "private": true,
+  "type": "module",
+  "description": "No dependencies. Exists only so Node's built-in test runner treats algo/web/*.js as ES modules; it is never installed, built, or served to the browser.",
+  "scripts": {
+    "test": "node --test tests/*.test.js"
+  }
+}

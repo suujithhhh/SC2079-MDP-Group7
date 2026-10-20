@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MDP Path Planner</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <main class="app">
+      <section class="card map-card">
+        <div class="header">
+          <div>
+            <h1>MDP Path Planner</h1>
+            <p class="muted">20 x 20 grid · 200 x 200 cm arena · live display</p>
+          </div>
+          <div id="status" class="badge">Ready</div>
+        </div>
+
+        <!-- Not shown on this display-only page; auto.js still fills them. -->
+        <div hidden>
+          <div id="observeBanner" class="warning" hidden>
+            <strong>Observe only.</strong> This page never sends a planning
+            request. It shows what the planner is doing for the RPi.
+          </div>
+          <div id="externalNote" class="help" hidden></div>
+        </div>
+
+        <div class="map-wrap">
+          <svg
+            id="map"
+            viewBox="-40 -10 1050 1050"
+            role="img"
+            aria-label="MDP arena map"
+          ></svg>
+        </div>
+      </section>
+
+      <aside class="sidebar">
+        <section class="card panel" aria-live="polite">
+          <h2>Planner version</h2>
+          <div class="version-row">
+            <div class="version-label">Last plan request</div>
+            <div class="version-circles">
+              <span id="reqV1" class="vcircle" title="V1: POST /plan">V1</span>
+              <span id="reqV2" class="vcircle" title="V2: POST /plan/v2">V2</span>
+            </div>
+            <div id="reqText" class="help version-text">Waiting for the planner.</div>
+          </div>
+          <div class="version-row">
+            <div class="version-label">This page shows</div>
+            <div class="version-circles">
+              <span id="shownV1" class="vcircle" title="V1 plans are not drawn here">V1</span>
+              <span id="shownV2" class="vcircle on-v2" title="V2: GET /state/v2">V2</span>
+            </div>
+            <div id="shownText" class="help version-text"></div>
+          </div>
+          <div id="versionWarning" class="warning" role="alert" hidden></div>
+        </section>
+
+        <section class="card panel" aria-live="polite">
+          <h2>Planning</h2>
+          <div id="planStatus" class="plan-status">Waiting for the RPi to request a plan.</div>
+          <div id="planDetail" class="help" style="margin-top: 6px"></div>
+        </section>
+
+        <section class="card panel">
+          <h2>Camera <span class="muted" id="galleryCount"></span></h2>
+          <div id="gallery" class="gallery"></div>
+          <div id="galleryEmpty" class="help">No photos yet. One appears after each snap.</div>
+        </section>
+
+        <!-- Display-only page: nothing below is shown or clickable. The cards
+             stay in the DOM only because auto.js fills them from the planner
+             state; they are never visible to the user. -->
+        <div id="hiddenPanels" hidden>
+        <section class="card panel">
+          <h2>Robot start</h2>
+          <p class="help" style="margin: 0 0 8px">
+            Rear reference (rear-axle midpoint) in 10 cm grid cells. Changes
+            apply as soon as they are valid.
+          </p>
+          <div class="start-grid">
+            <div>
+              <label for="startX">X cell</label>
+              <input id="startX" type="text" inputmode="numeric" autocomplete="off" value="2" />
+            </div>
+            <div>
+              <label for="startY">Y cell</label>
+              <input id="startY" type="text" inputmode="numeric" autocomplete="off" value="1" />
+            </div>
+            <div>
+              <label for="startHeading">Heading</label>
+              <select id="startHeading">
+                <option value="N" selected>North</option>
+                <option value="E">East</option>
+                <option value="S">South</option>
+                <option value="W">West</option>
+              </select>
+            </div>
+          </div>
+          <div id="startProblem" class="error" role="alert" hidden></div>
+          <div id="startNote" class="help" hidden></div>
+        </section>
+
+        <section class="card panel">
+          <h2>Obstacles <span class="muted" id="obstacleCount">0 / 8</span></h2>
+          <div id="faceHint" class="help" style="margin-bottom: 9px">
+            Click an empty grid cell to place an obstacle facing the selected
+            side. Click an obstacle to select and correct it.
+          </div>
+          <div class="face-buttons" role="group" aria-label="Image-facing side">
+            <button data-face="N" class="selected">N</button>
+            <button data-face="E">E</button>
+            <button data-face="S">S</button>
+            <button data-face="W">W</button>
+          </div>
+          <div id="obstacles" class="obstacle-list" style="margin-top: 9px"></div>
+          <button id="clearMap" class="danger" style="margin-top: 9px; width: 100%">
+            Clear map
+          </button>
+        </section>
+
+        <section class="card panel">
+          <h2>Route</h2>
+          <div id="resultLabel" class="result-label" hidden></div>
+          <div id="backendMessage" class="help" hidden></div>
+          <div id="failure" class="error" role="alert" hidden>
+            <strong id="failureTitle"></strong>
+            <div id="failureMessage"></div>
+            <div id="failureBackend" class="failure-backend"></div>
+          </div>
+          <div class="stats" style="margin-top: 9px">
+            <div class="stat">
+              <div class="label">Total cost</div>
+              <div id="totalCost" class="value">—</div>
+            </div>
+            <div class="stat">
+              <div class="label">Path distance</div>
+              <div id="distance" class="value">—</div>
+            </div>
+            <div class="stat">
+              <div class="label">Actions</div>
+              <div id="actionCount" class="value">—</div>
+            </div>
+          </div>
+          <h3 style="margin-top: 12px">Obstacle order</h3>
+          <div id="order" class="route"></div>
+          <h3 style="margin-top: 12px">Commands</h3>
+          <div id="commands" class="commands commands-static"></div>
+          <p class="help" style="margin: 8px 0 0">
+            Poses and the route are planner estimates, not measured robot
+            positions. The RPi executes a route only when it is valid and
+            complete.
+          </p>
+        </section>
+        </div>
+      </aside>
+    </main>
+
+    <script type="module" src="/auto.js"></script>
+  </body>
+</html>

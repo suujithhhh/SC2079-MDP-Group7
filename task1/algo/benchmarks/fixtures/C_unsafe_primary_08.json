@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "fixture_id": "C_unsafe_primary_08",
+  "family": "C_edge",
+  "n_obstacles": 8,
+  "expect": "feasible",
+  "tags": [
+    "unsafe_primary",
+    "needs_alternatives",
+    "large"
+  ],
+  "requires_alternatives": true,
+  "description": "Eight obstacles: obstacle 1 has an UNSAFE primary viewing pose (obstacle 2 clips its footprint) but exactly one safe lateral alternative; obstacles 3-8 are spread with safe primaries. Needs allow_alternative_viewing=True. For measuring future implementations; the old search must not be run on it.",
+  "verification": "Static: primary viewing pose of obstacle 1 unsafe, exactly one alternative safe, every other primary safe (checked by tests). Planner behaviour not established.",
+  "coordinate_units": "cm",
+  "start": {
+    "x": 20,
+    "y": 10,
+    "heading_deg": 90
+  },
+  "obstacles": [
+    {
+      "id": 1,
+      "x": 30,
+      "y": 100,
+      "face": "S"
+    },
+    {
+      "id": 2,
+      "x": 15,
+      "y": 70,
+      "face": "E"
+    },
+    {
+      "id": 3,
+      "x": 100,
+      "y": 20,
+      "face": "W"
+    },
+    {
+      "id": 4,
+      "x": 130,
+      "y": 50,
+      "face": "W"
+    },
+    {
+      "id": 5,
+      "x": 80,
+      "y": 160,
+      "face": "E"
+    },
+    {
+      "id": 6,
+      "x": 150,
+      "y": 140,
+      "face": "S"
+    },
+    {
+      "id": 7,
+      "x": 170,
+      "y": 90,
+      "face": "N"
+    },
+    {
+      "id": 8,
+      "x": 100,
+      "y": 90,
+      "face": "N"
+    }
+  ]
+}

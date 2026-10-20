@@ -1,0 +1,10 @@
+LEFT IR calibration analysis
+Source: ir_left_calibration.csv and ir_left_calibration_runs.csv
+15 known distances, 100 records each. All 1500 parse_ok=1 and F=00.
+Model: distance_cm = 31785.22973379 / (ADC_L - (-26.48617844)) + (-0.29510522)
+Robust fit: scipy least_squares soft_l1, f_scale=0.2 cm on 15 distance medians (equal distance weights).
+Group-median R2=0.99928757, RMSE=2.3201 mm, max absolute residual=6.8666 mm.
+Individual recorded readings: RMSE=18.2885 mm, median absolute error=1.8406 mm. This is IN-SAMPLE, not independent validation.
+Outlier flag: abs(ADC - per-distance median) > max(3*1.4826*MAD,20 ADC); exploratory and not a firmware fault metric.
+Measured 10-40 cm only. No temperature supplied; single run per distance, no independent repeats.
+RIGHT sensor fit from earlier conversation (not independently reverified here): distance_cm=32831.45/(ADC_R-94.6824)-1.02464. Do not interchange coefficients.
