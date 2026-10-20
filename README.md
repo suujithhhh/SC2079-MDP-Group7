@@ -65,6 +65,6 @@ Group 7
 | Subsystem | Members |
 |---|---|
 | STM32 firmware | Sujith, Koulik Roy |
-| Raspberry Pi | Ash, Nam |
+| Raspberry Pi and image recognition | Ash, Nam |
 | Algorithm | Brandon |
 | Android | Revathi, Xuehao |
