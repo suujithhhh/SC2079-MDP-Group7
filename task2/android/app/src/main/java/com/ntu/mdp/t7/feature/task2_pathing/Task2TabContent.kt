@@ -28,6 +28,8 @@ fun Task2TabContent(
     bluetoothEnabled: Boolean,
     isStartSent: Boolean,
     isPagerLocked: Boolean,
+    elapsedMs: Long,
+    isTimerRunning: Boolean,
     onScanClick: () -> Unit,
     onQuickConnectClick: () -> Unit,
     onClearSavedDeviceClick: () -> Unit,
@@ -41,6 +43,8 @@ fun Task2TabContent(
     onTask2Obs2LengthChange: (Int) -> Unit,
     onPagerLockToggle: () -> Unit,
     modifier: Modifier = Modifier,
+    isReady: Boolean = false,
+    isConnected: Boolean = false,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp), modifier = modifier.fillMaxSize()) {
         Row(
@@ -58,11 +62,9 @@ fun Task2TabContent(
                     obs2TargetId = task2State.task2Obs2TargetId,
                     obs1ImageUrl = task2State.task2Obs1ImageUrl,
                     obs2ImageUrl = task2State.task2Obs2ImageUrl,
-                    robotXCm = task2State.task2RobotXCm,
-                    robotYCm = task2State.task2RobotYCm,
-                    robotHeadingDeg = task2State.task2RobotHeadingDeg,
+                    robotStep = task2State.robotStep,
                     onClearClick = onClearGridClick,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
                 )
             }
         }
@@ -84,7 +86,9 @@ fun Task2TabContent(
             Task2ControlPanel(
                 onStartClick = onStartClick,
                 isStartSent = isStartSent,
-                modifier = Modifier.weight(0.4f)
+                isReady = isReady,
+                isConnected = isConnected,
+                modifier = Modifier.weight(0.4f),
             )
         }
 
@@ -100,8 +104,10 @@ fun Task2TabContent(
                 onDist2Change = onTask2Distance2Change,
                 onObs2LengthChange = onTask2Obs2LengthChange,
                 isPagerLocked = isPagerLocked,
+                elapsedMs = elapsedMs,
+                isTimerRunning = isTimerRunning,
                 onPagerLockToggle = onPagerLockToggle,
-                modifier = Modifier.width(300.dp).fillMaxHeight()
+                modifier = Modifier.width(300.dp).fillMaxHeight(),
             )
             Column(
                 modifier = Modifier.weight(1f).fillMaxHeight(),

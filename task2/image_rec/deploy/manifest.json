@@ -1,0 +1,32 @@
+{
+  "candidate_only": true,
+  "classes": {
+    "0": "bullseye",
+    "1": "left",
+    "2": "right"
+  },
+  "confidence": 0.7,
+  "export_ultralytics_version": "8.4.128",
+  "files": {
+    "README.txt": "ea2e285276aec7b9513e97516e94f132e383044cbdbce07578681db9dd691615",
+    "export_provenance.json": "7ab025ab8e354768bff4f39401e3673641f140fa8954b209abb2868529c700dc",
+    "inference.py": "4e01bd33d767c639431f9029323e049cf7f8dc0d1d8f236819e2b800a49ee0c2",
+    "metadata.yaml": "490d8ba9236df367c60591a6004c24e4408226b5c8e887f931f304903b740754",
+    "model.ncnn.bin": "2ea380dbf924712197ff1374a200464b7909cd81820d7ff8d3ebc3e5163cc742",
+    "model.ncnn.param": "8939f00384e78ee5b384202d14f331acc3e27bda343c84f75cfd472167250a30",
+    "operating_point.json": "40ea7bd56d9281e6fd444f8c93101056c335b23728e499bad36bf8e688183e93",
+    "requirements.txt": "3f59d3aedff56ecb2ccf08cc59cf96a1b6a3cc59a7ac34ba9dec9ff691074c6e",
+    "test_inference.py": "68204973fcf4aee2b0084d518b506c24c884f36a4a673d2e2a5f3ae08a755e5e",
+    "validation.json": "d2d9ab83c1daa88d2fd9ef3b4d97c8e373dc6da02b2d28f83cc30c6a00a561d5",
+    "versions.json": "990a13d21b1f8c1940346622fc3eb4e650b302cba8c6bc40211b9045c0fefb27"
+  },
+  "imgsz": 640,
+  "legacy_ids": {
+    "bullseye": "marker",
+    "left": "39",
+    "right": "38"
+  },
+  "metrics_recomputed_during_packaging": false,
+  "requires_live_pi_validation": true,
+  "source_checkpoint_sha256": "38c9b8166c74686e4ba2e54c06cec76b3596b0bc2e5b169bc91e17d4c94d9768"
+}

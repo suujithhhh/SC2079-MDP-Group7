@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 31
+names: ['11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31', '32', '33', '34', '35', '36', '37', '38', '39', '40', 'marker']
+
+roboflow:
+  workspace: my-space-gprvy
+  project: yukto-s-c
+  version: 58
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/my-space-gprvy/yukto-s-c/dataset/58

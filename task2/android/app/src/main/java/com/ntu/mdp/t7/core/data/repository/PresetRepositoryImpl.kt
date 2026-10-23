@@ -12,7 +12,7 @@ class PresetRepositoryImpl(private val context: Context) : PresetRepository {
 
     companion object {
         private const val PREFS_NAME = "arena_preset_storage"
-        private const val SLOT_COUNT = 3
+        private const val SLOT_COUNT = 2
     }
 
     private fun getPrefs(): SharedPreferences {

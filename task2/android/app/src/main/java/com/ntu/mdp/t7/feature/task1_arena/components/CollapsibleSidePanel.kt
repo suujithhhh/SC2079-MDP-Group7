@@ -37,6 +37,7 @@ fun CollapsibleSidePanel(
     onPagerLockToggle: () -> Unit,
     modifier: Modifier = Modifier,
     initiallyExpanded: Boolean = false,
+    alwaysVisibleContent: (@Composable () -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
     var isExpanded by rememberSaveable { mutableStateOf(initiallyExpanded) }
@@ -69,6 +70,8 @@ fun CollapsibleSidePanel(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
+
+        alwaysVisibleContent?.invoke()
 
         AnimatedVisibility(
             visible = isExpanded,

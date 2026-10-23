@@ -101,11 +101,13 @@ class ConnectionViewModel(
 
     fun addStatusLog(message: String, level: StatusLevel = StatusLevel.INFO) {
         _uiState.update {
-            it.copy(statusLog = (it.statusLog + StatusMessage(
-                time = timeFormat.format(Date()),
-                message = message,
-                level = level
-            )).takeLast(100))
+            it.copy(
+                statusLog = (it.statusLog + StatusMessage(
+                    time = timeFormat.format(Date()),
+                    message = message,
+                    level = level,
+                )).takeLast(100),
+            )
         }
     }
 

@@ -80,6 +80,7 @@ APPROACH_REMEASURE_CM = 60.0    # further than this: drive all but APPROACH_SHOR
 APPROACH_SHORT_CM = 15.0
 US_JUMP_CM = 8.0                # a reading this far from (last reading - the straight just driven) is taken again
 US_MISSED_ECHO_CM = 60.0        # ... and, still longer than that and beyond this, taken as a missed echo
+MIN_CORRECTION_CM = 2.0         # at the stop where only an arrow is read, a correction under this is not driven
 FIRST_READING_MAX_CM = 300.0    # a start reading must be an obstacle straight ahead
 EXTRA_MARGIN_CM = 2.0           # on top of config.MARGIN_CM for every planned move
 # Long forward straights drive in the faster TASK2TEST profile (team-tested accurate for distance, 2026-10-15); every
@@ -491,7 +492,9 @@ def beam_y(pose: Pose, sensor: str) -> float:
     return ry if sensor == "R" else -ry
 
 
-STRAIGHT_FIX_MIN_DEG = 1.0      # straights start with a fix turn only when the IMU is this far off the plan's heading
+# Straights start with a fix turn only when the IMU is this far off the plan's heading. Robot run 2026-10-15: three 1 deg
+# fix turns (MOV,FR,1 / MOV,BR,1, ~0.33 s each) moved the wheels 0 counts and left the heading where it was.
+STRAIGHT_FIX_MIN_DEG = 2.0
 
 
 def straight_heading_fix(command: str, expected_deg: float, actual_deg: float) -> tuple[list[str], float]:
@@ -735,8 +738,10 @@ class FinalRun:
         return min(move, max(0.0, tracked_cm - wanted_cm - APPROACH_SHORT_CM))
 
     def drive_to(self, wanted_cm: float, tag: str, tolerance_cm: float = STOP_TOLERANCE_CM,
-                 tracked_cm: float | None = None) -> float:
-        """Straights until the ultrasonic reads `wanted_cm` (within `tolerance_cm`); returns the reading. With
+                 tracked_cm: float | None = None, min_move_cm: float = 0.0) -> float:
+        """Straights until the ultrasonic reads `wanted_cm` (within `tolerance_cm`); returns the reading. A correction
+        shorter than `min_move_cm` is not driven (the robot cannot make moves that small: robot run 2026-10-15, MOV,B,1
+        moved 0.1 cm and MOV,B,2 0.7 cm); only for stops where a cm or two does not matter. With
         `tracked_cm` (the Pi's own distance to the same surface) a split approach may be one straight, and is never
         driven past what the tracking allows (use_tracking)."""
         distance = self.front_cm(f"{tag} start")
@@ -751,6 +756,10 @@ class FinalRun:
             if tracked_cm is not None:
                 move = self.use_tracking(move, gap, distance, tracked_cm, wanted_cm, tag, first)
             first = False
+            if min_move_cm and 0 < abs(round(move)) < min_move_cm:
+                self.log(f"{tag}: {distance:.1f} cm is {gap:+.1f} cm from {wanted_cm:g} cm: a {abs(move):.0f} cm move is "
+                         f"not driven")
+                return distance
             self.straight(move, tag)
             if tracked_cm is not None:
                 tracked_cm -= move                      # the wall is that much nearer (the planned move, as in the pose)
@@ -777,6 +786,7 @@ class FinalRun:
         """Up to ARROW_LOOKS looks; (side, lateral cm right of the axis at `depth_cam`, look)."""
         for i in range(ARROW_LOOKS):
             look = self.camera.look(f"{tag}{i}", 1)
+            self.log(f"{tag} look {i}: {getattr(look, 'seconds', 0.0):.2f} s")
             side, votes = decide_arrow(look.frames)
             if side is not None:
                 box = largest(look.frames[0], "arrow")
@@ -863,7 +873,8 @@ class FinalRun:
     def read_o2_centred(self) -> None:
         """After the C curve (facing O2): to O2_TURN_US_CM["RIGHT"] by the ultrasonic, then O2's arrow, one
         inference (the camera is then about as far from O2 as it was from O1)."""
-        distance = self.drive_to(O2_TURN_US_CM["RIGHT"], "O2 reading position", O2_TURN_TOLERANCE_CM)
+        distance = self.drive_to(O2_TURN_US_CM["RIGHT"], "O2 reading position", O2_TURN_TOLERANCE_CM,
+                                 min_move_cm=MIN_CORRECTION_CM)   # only the arrow is read here: a cm or two is nothing
         self.o2_face = self.pose.y + config.ULTRASONIC_FORWARD_CM + distance
         depth_cam = self.o2_face - self.pose.y - config.CAMERA_FORWARD_CM
         side, _, look = self.read("o2_arrow", depth_cam)
@@ -1416,6 +1427,9 @@ def main() -> None:
     parser.add_argument("--out", type=Path, default=Path.home() / "mdp/task2_runs")
     parser.add_argument("--profile", choices=("PRECISION", "STANDARD", "TASK2TEST"), default="PRECISION")
     parser.add_argument("--ultrasonic-forward", type=float, default=config.ULTRASONIC_FORWARD_CM)
+    parser.add_argument("--camera-settle", type=float, default=0.15, metavar="S",
+                        help="seconds the camera waits after the robot stops before a picture (was 0.3; raise it if the "
+                             "saved pictures are blurred)")
     parser.add_argument("--no-heading-fix", dest="heading_fix", action="store_false")
     parser.add_argument("--no-one-shot-park", dest="park_one_shot", action="store_false",
                         help="always stop short and measure again when driving back into the carpark; by default one "
@@ -1460,7 +1474,7 @@ def main() -> None:
         android.start()                                # the tablet can connect while the camera loads
     started = time.monotonic()
     print("Loading the camera and the model ...")
-    camera = Camera(args.model, imgsz=args.imgsz)
+    camera = Camera(args.model, imgsz=args.imgsz, settle_s=args.camera_settle)
     print(f"camera ready ({time.monotonic() - started:.0f} s)")
     camera.out_dir = run_dir
     port = open_serial(args.stm)

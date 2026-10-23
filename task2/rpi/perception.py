@@ -142,8 +142,10 @@ def _worker(model_dir: str, imgsz: int, conf: float, jobs, results) -> None:
 
     signal.signal(signal.SIGINT, signal.SIG_IGN)   # Ctrl-C is the main process's emergency STOP, not ours
     model = YOLO(model_dir, task="detect")   # the Task 2 model is a detector (metadata.yaml task: detect)
+    # The same arguments as the real calls below: the robot run 2026-10-15 printed "Loading ... for NCNN inference" a
+    # second time at the first real look (after START), which suggests the model was set up again there.
     model.predict(source=np.zeros((config.FRAME_HEIGHT, config.FRAME_WIDTH, 3), dtype=np.uint8),
-                  imgsz=imgsz, verbose=False)
+                  imgsz=imgsz, conf=conf, device="cpu", verbose=False)
     results.put(("ready", None))
     while True:
         job = jobs.get()
@@ -191,7 +193,7 @@ class Camera:
     """Pi camera in this process, the NCNN model in a worker process."""
 
     def __init__(self, model_dir: Path, imgsz: int = 640, conf: float = 0.25,
-                 settle_s: float = 0.3, ready_timeout_s: float = 120.0) -> None:
+                 settle_s: float = 0.15, ready_timeout_s: float = 120.0) -> None:
         import multiprocessing
         import queue
 

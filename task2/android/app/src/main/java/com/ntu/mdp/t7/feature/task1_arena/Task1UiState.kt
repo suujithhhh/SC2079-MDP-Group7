@@ -11,7 +11,7 @@ data class Task1UiState(
     val obstacles: List<Obstacle> = emptyList(),
     val editMode: EditMode = EditMode.LOCKED,
     val isKeypadDialogOpen: Boolean = false,
-    val presets: List<ObstaclePreset?> = listOf(null, null, null),
+    val presets: List<ObstaclePreset?> = listOf(null, null),
     val isNewPlacement: Boolean = false,
     val obstacleFaceDialogTarget: Int? = null,
     val obstacleIdDraft: String = "",

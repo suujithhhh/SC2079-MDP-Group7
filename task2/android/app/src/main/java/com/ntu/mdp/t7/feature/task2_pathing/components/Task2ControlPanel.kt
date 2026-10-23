@@ -26,7 +26,11 @@ fun Task2ControlPanel(
     onStartClick: () -> Unit,
     isStartSent: Boolean,
     modifier: Modifier = Modifier,
+    isReady: Boolean = false,
+    isConnected: Boolean = false,
 ) {
+    val enabled = if (isConnected) (isReady && !isStartSent) else !isStartSent
+
     Column(
         modifier = modifier
             .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(Dimens.RadiusMedium))
@@ -37,17 +41,17 @@ fun Task2ControlPanel(
     ) {
         Button(
             onClick = onStartClick,
-            enabled = !isStartSent,
+            enabled = enabled,
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Red,
-                disabledContainerColor = Color.Red.copy(alpha = 0.5f)
+                disabledContainerColor = Color.Gray.copy(alpha = 0.4f)
             ),
             shape = CircleShape,
             modifier = Modifier.size(120.dp)
         ) {
             Text(
                 text = "START",
-                color = Color.White,
+                color = if (enabled) Color.White else Color.White.copy(alpha = 0.6f),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )

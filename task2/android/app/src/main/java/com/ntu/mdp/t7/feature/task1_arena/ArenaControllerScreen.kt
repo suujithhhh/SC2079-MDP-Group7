@@ -18,14 +18,14 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -53,19 +53,21 @@ import com.ntu.mdp.t7.core.model.Direction
 import com.ntu.mdp.t7.core.model.DiscoveredDevice
 import com.ntu.mdp.t7.core.model.LinkState
 import com.ntu.mdp.t7.core.model.Obstacle
-import com.ntu.mdp.t7.core.model.RobotPose
 import com.ntu.mdp.t7.core.protocol.InboundMessage
 import com.ntu.mdp.t7.core.protocol.ProtocolParser
 import com.ntu.mdp.t7.feature.connection.ConnectionUiState
 import com.ntu.mdp.t7.feature.connection.ConnectionViewModel
+import com.ntu.mdp.t7.feature.connection.components.formatElapsedTime
 import com.ntu.mdp.t7.feature.connection.components.DevicePickerSheet
 import com.ntu.mdp.t7.feature.task1_arena.components.ObstacleFaceDialog
 import com.ntu.mdp.t7.feature.task1_arena.components.ObstacleKeypadDialog
 import com.ntu.mdp.t7.feature.task2_pathing.Task2TabContent
 import com.ntu.mdp.t7.feature.task2_pathing.Task2UiState
 import com.ntu.mdp.t7.feature.task2_pathing.Task2ViewModel
-import kotlinx.coroutines.GlobalScope
+import java.util.Locale
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 private val ReferenceScreenWidth = 800.dp
@@ -76,6 +78,8 @@ fun ArenaControllerScreen(
     task2State: Task2UiState,
     connectionState: ConnectionUiState,
     bluetoothEnabled: Boolean,
+    elapsedMs: Long,
+    isTimerRunning: Boolean,
     onScanClick: () -> Unit,
     onQuickConnectClick: () -> Unit,
     onClearSavedDeviceClick: () -> Unit,
@@ -110,6 +114,8 @@ fun ArenaControllerScreen(
     onTask2Distance2Change: (Int) -> Unit,
     onTask2Obs2LengthChange: (Int) -> Unit,
     modifier: Modifier = Modifier,
+    prepElapsedMs: Long = 0L,
+    isPrepTimerRunning: Boolean = false,
 ) {
     BoxWithConstraints(
         modifier = modifier
@@ -129,6 +135,10 @@ fun ArenaControllerScreen(
                 task2State = task2State,
                 connectionState = connectionState,
                 bluetoothEnabled = bluetoothEnabled,
+                elapsedMs = elapsedMs,
+                isTimerRunning = isTimerRunning,
+                prepElapsedMs = prepElapsedMs,
+                isPrepTimerRunning = isPrepTimerRunning,
                 onScanClick = onScanClick,
                 onQuickConnectClick = onQuickConnectClick,
                 onClearSavedDeviceClick = onClearSavedDeviceClick,
@@ -173,6 +183,10 @@ private fun ArenaControllerContent(
     task2State: Task2UiState,
     connectionState: ConnectionUiState,
     bluetoothEnabled: Boolean,
+    elapsedMs: Long,
+    isTimerRunning: Boolean,
+    prepElapsedMs: Long = 0L,
+    isPrepTimerRunning: Boolean = false,
     onScanClick: () -> Unit,
     onQuickConnectClick: () -> Unit,
     onClearSavedDeviceClick: () -> Unit,
@@ -207,7 +221,7 @@ private fun ArenaControllerContent(
     onTask2Distance2Change: (Int) -> Unit,
     onTask2Obs2LengthChange: (Int) -> Unit,
 ) {
-    val pagerState = rememberPagerState(initialPage = 1, pageCount = { 2 })
+    val pagerState = rememberPagerState(initialPage = 0) { 2 }
     val coroutineScope = rememberCoroutineScope()
 
     Column(
@@ -221,13 +235,13 @@ private fun ArenaControllerContent(
         if (!task1State.isPagerLocked) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                TabRow(
+                PrimaryTabRow(
                     selectedTabIndex = pagerState.currentPage,
                     modifier = Modifier.fillMaxWidth(),
                     containerColor = ArenaColors.PanelBackground,
-                    contentColor = ArenaColors.TextPrimary
+                    contentColor = ArenaColors.TextPrimary,
                 ) {
                     Tab(
                         selected = pagerState.currentPage == 0,
@@ -246,13 +260,17 @@ private fun ArenaControllerContent(
         HorizontalPager(
             state = pagerState,
             userScrollEnabled = !task1State.isPagerLocked,
-            modifier = Modifier.weight(1f).fillMaxWidth()
+            modifier = Modifier.weight(1f).fillMaxWidth(),
         ) { page ->
             if (page == 0) {
                 Task1TabContent(
                     task1State = task1State,
                     connectionState = connectionState,
                     bluetoothEnabled = bluetoothEnabled,
+                    elapsedMs = elapsedMs,
+                    isTimerRunning = isTimerRunning,
+                    prepElapsedMs = prepElapsedMs,
+                    isPrepTimerRunning = isPrepTimerRunning,
                     onScanClick = onScanClick,
                     onQuickConnectClick = onQuickConnectClick,
                     onClearSavedDeviceClick = onClearSavedDeviceClick,
@@ -274,7 +292,7 @@ private fun ArenaControllerContent(
                     onSavePreset = onSavePreset,
                     onLoadPreset = onLoadPreset,
                     onClearPreset = onClearPreset,
-                    onPagerLockToggle = onPagerLockToggle
+                    onPagerLockToggle = onPagerLockToggle,
                 )
             } else {
                 Task2TabContent(
@@ -284,6 +302,10 @@ private fun ArenaControllerContent(
                     bluetoothEnabled = bluetoothEnabled,
                     isStartSent = task1State.isStartSent,
                     isPagerLocked = task1State.isPagerLocked,
+                    elapsedMs = elapsedMs,
+                    isTimerRunning = isTimerRunning,
+                    isReady = task1State.isReady,
+                    isConnected = connectionState.link is LinkState.Connected,
                     onScanClick = onScanClick,
                     onQuickConnectClick = onQuickConnectClick,
                     onClearSavedDeviceClick = onClearSavedDeviceClick,
@@ -295,7 +317,7 @@ private fun ArenaControllerContent(
                     onTask2Distance1Change = onTask2Distance1Change,
                     onTask2Distance2Change = onTask2Distance2Change,
                     onTask2Obs2LengthChange = onTask2Obs2LengthChange,
-                    onPagerLockToggle = onPagerLockToggle
+                    onPagerLockToggle = onPagerLockToggle,
                 )
             }
         }
@@ -328,7 +350,7 @@ private fun ArenaControllerContent(
             ObstacleKeypadDialog(
                 initialObstacles = task1State.obstacles,
                 onDismiss = onKeypadDialogDismiss,
-                onPlaceObstacles = onPlaceObstacles
+                onPlaceObstacles = onPlaceObstacles,
             )
         }
     }
@@ -346,7 +368,7 @@ fun ArenaControllerRoute(modifier: Modifier = Modifier) {
     val presetRepository = remember(context) { PresetRepositoryImpl(context) }
 
     val connectionViewModel: ConnectionViewModel = viewModel {
-        val transport = if (adapter != null && BluetoothPermissions.allGranted(context)) {
+        val transport = if ((adapter != null) && BluetoothPermissions.allGranted(context)) {
             ClassicBluetoothTransport(context, adapter)
         } else {
             FakeTransport()
@@ -370,6 +392,35 @@ fun ArenaControllerRoute(modifier: Modifier = Modifier) {
     )
     val requestDiscoverable = rememberRequestDiscoverableLauncher()
 
+    var isTimerRunning by rememberSaveable { mutableStateOf(value = false) }
+    var elapsedMs by rememberSaveable { mutableLongStateOf(0L) }
+
+    var isPrepTimerRunning by rememberSaveable { mutableStateOf(value = false) }
+    var prepElapsedMs by rememberSaveable { mutableLongStateOf(0L) }
+
+    LaunchedEffect(isTimerRunning) {
+        if (isTimerRunning) {
+            val startTime = System.currentTimeMillis() - elapsedMs
+            while (isTimerRunning) {
+                elapsedMs = System.currentTimeMillis() - startTime
+                delay(50.milliseconds)
+            }
+            if (elapsedMs > 0) {
+                connectionViewModel.addStatusLog("Run completed in ${formatElapsedTime(elapsedMs)}")
+            }
+        }
+    }
+
+    LaunchedEffect(isPrepTimerRunning) {
+        if (isPrepTimerRunning) {
+            val startTime = System.currentTimeMillis() - prepElapsedMs
+            while (isPrepTimerRunning) {
+                prepElapsedMs = System.currentTimeMillis() - startTime
+                delay(50.milliseconds)
+            }
+        }
+    }
+
     // Route incoming protocol lines to task ViewModels
     LaunchedEffect(Unit) {
         connectionViewModel.incomingLines.collect { line ->
@@ -379,7 +430,7 @@ fun ArenaControllerRoute(modifier: Modifier = Modifier) {
                     connectionViewModel.addStatusLog("Robot at %02d,%02d facing %s".format(message.x, message.y, message.direction.code))
                 }
                 is InboundMessage.RobotPoseDistance -> {
-                    task2ViewModel.updateRobotPoseDistance(message.xCm, message.yCm, message.headingDeg)
+                    // Task 2 live distance tracking removed
                 }
                 is InboundMessage.TargetFound -> {
                     task1ViewModel.updateObstacleTarget(message.obstacleId, message.targetId, message.face)
@@ -388,16 +439,32 @@ fun ArenaControllerRoute(modifier: Modifier = Modifier) {
                 }
                 is InboundMessage.StatusMessage -> {
                     connectionViewModel.addStatusLog(message.text)
+                    val lower = message.text.lowercase(Locale.ROOT)
+                    if (lower.contains("ready")) {
+                        task1ViewModel.setReady(ready = true)
+                        if (isPrepTimerRunning) {
+                            isPrepTimerRunning = false
+                            connectionViewModel.addStatusLog("Prep completed in ${formatElapsedTime(prepElapsedMs)}")
+                        }
+                    }
+                    if (lower.contains("done") || lower.contains("complete") || lower.contains("finish") || lower.contains("stop") || lower.contains("end")) {
+                        isTimerRunning = false
+                    }
                 }
                 InboundMessage.Ready -> {
-                    task1ViewModel.setReady(true)
+                    task1ViewModel.setReady(ready = true)
+                    isTimerRunning = false
+                    if (isPrepTimerRunning) {
+                        isPrepTimerRunning = false
+                        connectionViewModel.addStatusLog("Prep completed in ${formatElapsedTime(prepElapsedMs)}")
+                    }
                 }
                 else -> Unit
             }
         }
     }
 
-    var pendingScanAfterPermission by remember { mutableStateOf(false) }
+    var pendingScanAfterPermission by remember { mutableStateOf(value = false) }
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions(),
     ) { result ->
@@ -415,9 +482,9 @@ fun ArenaControllerRoute(modifier: Modifier = Modifier) {
         pendingScanAfterPermission = false
     }
 
-    var startupBluetoothPromptShown by rememberSaveable { mutableStateOf(false) }
+    var startupBluetoothPromptShown by rememberSaveable { mutableStateOf(value = false) }
     LaunchedEffect(adapter) {
-        if (adapter != null && !startupBluetoothPromptShown) {
+        if ((adapter != null) && !startupBluetoothPromptShown) {
             startupBluetoothPromptShown = true
             if (!BluetoothPermissions.allGranted(context)) {
                 permissionLauncher.launch(BluetoothPermissions.required())
@@ -426,9 +493,8 @@ fun ArenaControllerRoute(modifier: Modifier = Modifier) {
     }
 
     LaunchedEffect(connectionState.link, scanNonce, adapter) {
-        val currentAdapter = adapter
-        if (connectionState.link == LinkState.Scanning && currentAdapter != null && BluetoothPermissions.allGranted(context)) {
-            val discovery = BluetoothDiscovery(context, currentAdapter)
+        if ((connectionState.link == LinkState.Scanning) && (adapter != null) && BluetoothPermissions.allGranted(context)) {
+            val discovery = BluetoothDiscovery(context, adapter)
             discovery.start { event ->
                 when (event) {
                     is DiscoveryEvent.DeviceFound ->
@@ -449,6 +515,10 @@ fun ArenaControllerRoute(modifier: Modifier = Modifier) {
         task2State = task2State,
         connectionState = connectionState,
         bluetoothEnabled = bluetoothEnabled,
+        elapsedMs = elapsedMs,
+        isTimerRunning = isTimerRunning,
+        prepElapsedMs = prepElapsedMs,
+        isPrepTimerRunning = isPrepTimerRunning,
         onScanClick = {
             if (BluetoothPermissions.allGranted(context)) {
                 requestDiscoverable()
@@ -479,13 +549,20 @@ fun ArenaControllerRoute(modifier: Modifier = Modifier) {
             task1ViewModel.onEditToggleClick { message ->
                 connectionViewModel.logOutbound(message)
                 connectionViewModel.addStatusLog("Sent plan to robot")
+                connectionViewModel.addStatusLog("Grid submit time: ${formatElapsedTime(prepElapsedMs)}")
                 coroutineScope.launch { connectionViewModel.transport.send(message) }
             }
         },
-        onKeypadDialogOpen = task1ViewModel::onKeypadDialogOpen,
+        onKeypadDialogOpen = {
+            prepElapsedMs = 0L
+            isPrepTimerRunning = true
+            task1ViewModel.onKeypadDialogOpen()
+        },
         onKeypadDialogDismiss = task1ViewModel::onKeypadDialogDismiss,
         onPlaceObstacles = task1ViewModel::onPlaceObstacles,
         onStartClick = {
+            elapsedMs = 0L
+            isTimerRunning = true
             task1ViewModel.onStartClick { message ->
                 connectionViewModel.logOutbound(message)
                 connectionViewModel.addStatusLog("Sent START signal")
@@ -493,6 +570,10 @@ fun ArenaControllerRoute(modifier: Modifier = Modifier) {
             }
         },
         onClearGridClick = {
+            isTimerRunning = false
+            isPrepTimerRunning = false
+            elapsedMs = 0L
+            prepElapsedMs = 0L
             task1ViewModel.onClearGridClick()
             task2ViewModel.resetTask2Data()
         },

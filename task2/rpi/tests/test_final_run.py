@@ -626,6 +626,54 @@ class UltrasonicJumpTest(unittest.TestCase):
         final = FinalRun(Stm(), None, heading_fix=False, log=lambda text: None)
         return final.drive_to(70.0, "test", 1.5), sent
 
+    def drive_min(self, readings, wanted, tolerance, min_move_cm):
+        from types import SimpleNamespace as NS
+        sent, feed = [], iter(readings)
+
+        class Stm:
+            def move(self, command):
+                sent.append(command)
+                return NS(ok=True)
+
+            def heading(self):
+                return None
+
+            def measure_front(self):
+                return NS(distance_cm=next(feed), used=5, seen=5, problem=None, ok=True)
+
+        lines = []
+        final = FinalRun(Stm(), None, heading_fix=False, log=lines.append)
+        return final.drive_to(wanted, "test", tolerance, min_move_cm=min_move_cm), sent, lines
+
+    def test_a_correction_under_the_minimum_is_not_driven(self):
+        """Robot run 2026-10-15: 33.0 cm for 34.2 (tolerance 1.0): MOV,B,1 moved the robot 0.1 cm."""
+        distance, sent, lines = self.drive_min([33.0], 34.2, 1.0, 2.0)
+        self.assertEqual((sent, distance), ([], 33.0))
+        self.assertTrue(any("not driven" in line for line in lines))
+        distance, sent, _ = self.drive_min([33.0, 34.0], 34.2, 1.0, 0.0)
+        self.assertEqual(sent, ["MOV,B,1"], "as before when no minimum is set")
+
+    def test_a_correction_of_the_minimum_or_more_is_driven(self):
+        distance, sent, _ = self.drive_min([37.2, 34.1], 34.2, 1.0, 2.0)
+        self.assertEqual(sent, ["MOV,F,3"])
+        distance, sent, _ = self.drive_min([36.2, 34.2], 34.2, 1.0, 2.0)
+        self.assertEqual(sent, ["MOV,F,2"])
+
+    def test_only_the_arrow_reading_stop_skips_small_corrections(self):
+        from final_run import MIN_CORRECTION_CM
+        seen = []
+        original = FinalRun.drive_to
+
+        def wrapper(self, wanted, tag, *args, **kwargs):
+            seen.append((tag, kwargs.get("min_move_cm", 0.0)))
+            return original(self, wanted, tag, *args, **kwargs)
+
+        with mock.patch.object(FinalRun, "drive_to", wrapper):
+            ok, final, stm, w, lines = OneShotParkTest.full_run(False)
+        self.assertTrue(ok, lines[-3:])
+        self.assertEqual({tag: m for tag, m in seen if m}, {"O2 reading position": MIN_CORRECTION_CM})
+        self.assertGreaterEqual(len(seen), 4)
+
     def test_a_shorter_reading_seen_twice_is_believed(self):
         """Nearer than the move allows: something is really there (e.g. a side wall in the cone)."""
         distance, sent = self.drive([90.2, 60.5, 60.4, 70.3])
@@ -793,6 +841,10 @@ class StraightHeadingFixTest(unittest.TestCase):
 
     def test_small_error_or_short_straight_unchanged(self):
         self.assertEqual(straight_heading_fix("MOV,F,50", 90.0, 89.5)[0], ["MOV,F,50"])
+        # robot run 2026-10-15: 1.0-1.2 deg fix turns moved nothing, so they are no longer sent
+        for command, actual in (("MOV,F,119", 91.1), ("MOV,B,1", 91.2), ("MOV,F,13", 89.0), ("MOV,F,50", 88.1)):
+            self.assertEqual(straight_heading_fix(command, 90.0, actual)[0], [command], f"{command} at {actual}")
+        self.assertEqual(straight_heading_fix("MOV,F,50", 90.0, 88.0)[0], ["MOV,FL,2", "MOV,F,49"], "2 deg is still fixed")
         self.assertEqual(straight_heading_fix("MOV,F,1", 90.0, 85.0)[0], ["MOV,F,1"])
 
     def test_capped(self):

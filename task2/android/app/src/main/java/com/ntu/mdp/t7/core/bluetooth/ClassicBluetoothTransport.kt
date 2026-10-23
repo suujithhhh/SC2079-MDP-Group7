@@ -178,7 +178,7 @@ class ClassicBluetoothTransport(
         } finally {
             try {
                 appContext.unregisterReceiver(receiver)
-            } catch (e: IllegalArgumentException) { }
+            } catch (_: IllegalArgumentException) { }
         }
     }
 
@@ -209,7 +209,7 @@ class ClassicBluetoothTransport(
                 val chunk = String(bytes, 0, count, Charsets.UTF_8)
                 Log.d(TAG, "read $count byte(s): ${chunk.replace("\r", "\\r").replace("\n", "\\n")}")
                 val lines = framer.feed(chunk).toMutableList()
-                if (lines.isEmpty() && input.available() == 0) {
+                if (lines.isEmpty() && (input.available() == 0)) {
                     framer.flushPending()?.let { lines.add(it) }
                 }
                 lines.forEach { line ->

@@ -1,0 +1,9 @@
+{
+  "batch": 1,
+  "checkpoint": "task2/v2/weights/best.pt",
+  "checkpoint_sha256": "38c9b8166c74686e4ba2e54c06cec76b3596b0bc2e5b169bc91e17d4c94d9768",
+  "end2end": false,
+  "imgsz": 640,
+  "precision": "FP32 weights",
+  "ultralytics": "8.4.128"
+}

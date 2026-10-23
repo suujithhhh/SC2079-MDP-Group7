@@ -29,7 +29,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -141,7 +140,7 @@ private fun DeviceColumn(
                 verticalArrangement = Arrangement.spacedBy(Dimens.Space8),
             ) {
                 items(devices, key = { it.address }) { device ->
-                    DeviceRow(device = device, onSelected = { onDeviceSelected(device) })
+                    DeviceRow(device = device) { onDeviceSelected(device) }
                 }
             }
         }

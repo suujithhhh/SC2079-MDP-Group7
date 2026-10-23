@@ -1,0 +1,17 @@
+{
+  "note": "Packaging host versions, not measured Pi compatibility or speed.",
+  "packages": {
+    "Pillow": "10.2.0",
+    "PyYAML": "6.0.1",
+    "ncnn": "1.0.20260526",
+    "numpy": "1.26.4",
+    "opencv-python": "not installed in packaging interpreter",
+    "opencv-python-headless": "not installed in packaging interpreter",
+    "pnnx": "20260526",
+    "torch": "2.3.0a0+6ddf5cf85e.nv24.4",
+    "torchvision": "0.18.0a0",
+    "ultralytics": "8.4.128"
+  },
+  "platform": "Linux-5.15.0-162.011-shopee-x86_64-with-glibc2.35",
+  "python": "3.10.12"
+}

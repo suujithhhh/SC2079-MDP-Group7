@@ -33,7 +33,7 @@ private val NumpadRows = listOf(
     listOf("1", "2", "3"),
     listOf("4", "5", "6"),
     listOf("7", "8", "9"),
-    listOf("C", "0", ",")
+    listOf("C", "0", ","),
 )
 
 @Composable
@@ -47,7 +47,7 @@ fun ObstacleKeypadDialog(
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
     val commaCount = currentInput.count { it == ',' }
-    val isCommaEnabled = commaCount < 2 && currentInput.isNotEmpty() && currentInput.last().isDigit()
+    val isCommaEnabled = (commaCount < 2) && currentInput.isNotEmpty() && currentInput.last().isDigit()
     val listState = rememberLazyListState()
 
     LaunchedEffect(draftObstacles.size) {
@@ -233,8 +233,7 @@ fun ObstacleKeypadDialog(
                                         text = key,
                                         modifier = Modifier.weight(1f),
                                         enabled = if (key == ",") isCommaEnabled else true,
-                                        onClick = { onKeyPress(key) }
-                                    )
+                                    ) { onKeyPress(key) }
                                 }
                             }
                         }
@@ -322,9 +321,9 @@ private fun InputDisplayBox(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = if (input.isEmpty()) "Format: X, Y, Face" else input,
+                text = input.ifEmpty { "Format: X, Y, Face" },
                 style = AppType.Title,
-                color = if (input.isEmpty()) ArenaColors.TextSecondary else ArenaColors.TextPrimary
+                color = if (input.isEmpty()) ArenaColors.TextSecondary else ArenaColors.TextPrimary,
             )
         }
 

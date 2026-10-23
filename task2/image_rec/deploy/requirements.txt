@@ -1,0 +1,5 @@
+ultralytics==8.4.128
+ncnn==1.0.20260526
+Pillow
+PyYAML
+# Reuse platform-compatible torch, torchvision, numpy, and OpenCV.

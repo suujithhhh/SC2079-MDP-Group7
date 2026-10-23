@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class Task1ViewModel(
-    private val presetRepository: PresetRepository? = null
+    private val presetRepository: PresetRepository? = null,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(Task1UiState())
@@ -70,7 +70,7 @@ class Task1ViewModel(
             if (state.editMode == EditMode.EDITING) {
                 state.withObstacleDialogCleared().copy(obstacleFaceDialogTarget = clicked.id, isNewPlacement = false)
             } else {
-                state.copy(obstacles = state.obstacles.map { it.copy(isSelected = it.id == clicked.id && !it.isSelected) })
+                state.copy(obstacles = state.obstacles.map { it.copy(isSelected = (it.id == clicked.id) && !it.isSelected) })
             }
         }
     }
@@ -319,7 +319,7 @@ class Task1ViewModel(
     fun onClearPreset(slotIndex: Int) {
         _uiState.update { state ->
             val newPresets = state.presets.toMutableList()
-            if (slotIndex in 0 until 3) {
+            if (slotIndex in 0 until 2) {
                 newPresets[slotIndex] = null
             }
             state.copy(presets = newPresets)

@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import com.ntu.mdp.t7.core.model.EditMode
 import com.ntu.mdp.t7.core.model.Obstacle
 import com.ntu.mdp.t7.core.model.ObstaclePreset
+import com.ntu.mdp.t7.feature.connection.components.RunTimerCard
 import com.ntu.mdp.t7.ui.theme.AppTheme
 import com.ntu.mdp.t7.ui.theme.AppType
 import com.ntu.mdp.t7.ui.theme.Dimens
@@ -41,15 +42,35 @@ fun PresetPanel(
     onLoadPreset: (slotIndex: Int) -> Unit,
     onClearPreset: (slotIndex: Int) -> Unit,
     modifier: Modifier = Modifier,
+    elapsedMs: Long = 0L,
+    isTimerRunning: Boolean = false,
+    prepElapsedMs: Long = 0L,
+    isPrepTimerRunning: Boolean = false,
 ) {
     CollapsibleSidePanel(
-        title = "Test Presets",
+        title = "Task 1 Test",
         isPagerLocked = isPagerLocked,
         onPagerLockToggle = onPagerLockToggle,
+        alwaysVisibleContent = {
+            Column(verticalArrangement = Arrangement.spacedBy(Dimens.Space8)) {
+                RunTimerCard(
+                    elapsedMs = prepElapsedMs,
+                    isRunning = isPrepTimerRunning,
+                    title = "PREP TIMER",
+                    modifier = Modifier.fillMaxWidth()
+                )
+                RunTimerCard(
+                    elapsedMs = elapsedMs,
+                    isRunning = isTimerRunning,
+                    title = "RUN TIMER",
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        },
         modifier = modifier
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(Dimens.Space8)) {
-            for (slotIndex in 0..2) {
+            for (slotIndex in 0..1) {
                 val preset = presets.getOrNull(slotIndex)
                 PresetSlotRow(
                     slotIndex = slotIndex,

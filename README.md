@@ -17,13 +17,13 @@ task1/                 Task 1 (image recognition)
   algo/                Laptop path planner, HTTP + JSON (server.py, POST /plan/v2) and web UI
   rpi/                 Raspberry Pi program: Android <-> planner <-> STM, camera on SNAP
   android/             Android tablet app (Kotlin, Jetpack Compose, Bluetooth SPP)
-  image_rec/           Image-recognition model and training code (placeholder)
+  image_rec/           Symbol model: training, evaluation and NCNN export
 task2/                 Task 2 (fastest car)
   stm/                 STM32 firmware with the Task 2 additions (IR, ultrasonic, USPARK parking)
   algo/                Notes only: the Task 2 planner is Python inside task2/rpi
   rpi/                 Raspberry Pi program final_run.py, its planner, simulator and tests
   android/             Android app with the Task 2 screen
-  image_rec/           Arrow model and training code (placeholder)
+  image_rec/           Arrow model: training, evaluation and NCNN export
 PROTOCOL.md            Wire formats, coordinates and robot geometry shared by all subsystems
 ```
 
@@ -55,8 +55,6 @@ out each command and reports `ACK` or `ERR`. All the message formats are in
 
 - Only the code the team wrote is included. Vendor HAL, CMSIS, FreeRTOS, build
   output, model weights and datasets are left out.
-- `task2/rpi` is the Task 2 Pi code as of 15 Oct 2026. The final on-robot
-  version may differ slightly.
 
 ## Team
 

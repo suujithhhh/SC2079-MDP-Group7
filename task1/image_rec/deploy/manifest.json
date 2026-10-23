@@ -1,0 +1,27 @@
+{
+  "source_checkpoint": "runs/yolo26s_seg_mdp_circle_v3/weights/candidate.pt",
+  "source_checkpoint_sha256": "53cd9174571e036c471fbe565920d4014bc5fa58af2ce4e4769d0ccafc7b0220",
+  "network_imgsz": 640,
+  "candidate_only": true,
+  "requires_live_pi_validation": true,
+  "sha256": {
+    "README.txt": "f2e6b5acc6c974c05e6b10172da7ad5bfc6ba5262b953144b494cd94ea1857c2",
+    "TRAINING_RECORD.txt": "b6c9dd44813cec17bad6b206df93c76bb1e2a0e399300ed725fc045150828e82",
+    "inference.py": "0cbd04658ad0ed6efe940abe2f9e0cf2d354e50b3cbefb4bd93e07277f89b7cf",
+    "metadata.yaml": "e071990568b9d9657bcb49600ec76274f02e9161000d2151231e96d9516a46c2",
+    "model.ncnn.bin": "cf431a6572a2350756c4a7eac287c5863b8cf7c70dcc6b926c69dfa84e28aa21",
+    "model.ncnn.param": "3049f9ae8c40579b6e4f11478224289693ebdeb4c30f33780409fa7f3d1bda35",
+    "model_ncnn.py": "dfae04f8ec141516c2bc1647ede0adccdc2ba1057b40e7170b7f24027130a11f",
+    "package_smoke_test.json": "06687a076f41e652c202049db76f9116d8fc5ef4cb8b352508341cd9c5235fe3",
+    "requirements.txt": "1fcc59e0633f58224f1fe2c7277a7daf8e4f5d6644e378576fca4e0878c9995e",
+    "sample_circle_160.jpg": "0135a80a5803b31843d01ad86cfbb091f2d8d6244c982677272776a65209a490",
+    "sample_far_circle_160.png": "2680030b99d7f339f704fd0b96fa9166afdfb108890558d0731d8401d3177689",
+    "sample_six_160.jpg": "a2b19d40e8b796a56e2e6ab4b77ff478129afed512b0876e5a6fa86a91181dcf",
+    "selected_best_checkpoint.json": "0f35a028a98177d4255799f87366e87e101dd2078ad27253e1123a9a735d6551",
+    "training_data_manifest.json": "0297bdd9364d7f72a01b2751b9f33243f6103a79dc1aa5b08fa7343f132eed4d",
+    "training_environment.json": "8f5da04d2b1f133ab8293e877053a1ceb8abc1fb5f4789d678a1268a42da8b52",
+    "validation.json": "b86d9bd2f41164edfe56f1410f19fc9667a9f8f2cb78f590368e9ee4efde42d5"
+  },
+  "selected_epoch": 2,
+  "selected_best_pt_sha256": "2dfbebea788828a9852ac26f82fa568052a828129c441ef4a94dfcc67dfcaf9a"
+}

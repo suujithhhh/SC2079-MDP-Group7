@@ -12,8 +12,13 @@ data class Task2UiState(
     val task2Obs2TargetId: Int? = null,
     val task2Obs1ImageUrl: String? = null,
     val task2Obs2ImageUrl: String? = null,
-    val task2RobotXCm: Float? = null,
-    val task2RobotYCm: Float? = null,
-    val task2RobotHeadingDeg: Float? = null,
+    val robotStep: Task2RobotStep = Task2RobotStep.START,
     val rpiServerBaseUrl: String = "http://192.168.1.1:5001/",
 )
+
+enum class Task2RobotStep {
+    START,
+    AT_OBS_1,
+    AT_OBS_2,
+    END
+}

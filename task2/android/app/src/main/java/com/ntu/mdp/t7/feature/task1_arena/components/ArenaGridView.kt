@@ -92,7 +92,7 @@ fun ArenaGrid(
         RowLabels(
             gridSize = gridSize, 
             cellSize = cellSize,
-            onRowLabelClick = onRowLabelClick
+            onRowLabelClick = onRowLabelClick,
         )
 
             Column {
@@ -229,7 +229,6 @@ private fun ColumnLabels(gridSize: Int, cellSize: Dp, onColumnLabelClick: (Int) 
     }
 }
 
-internal val ObstacleLabelFontSize = 16.5.sp
 internal val ObstacleOutlineWidth = 1.5.dp
 
 private val labelStyle = TextStyle(
@@ -243,9 +242,9 @@ private val labelStyle = TextStyle(
 private fun GridBackground(
     gridSize: Int, 
     cellSize: Dp, 
+    modifier: Modifier = Modifier,
     highlightedColumn: Int? = null,
     highlightedRow: Int? = null,
-    modifier: Modifier = Modifier
 ) {
     Canvas(modifier = modifier.border(2.dp, ArenaColors.GridBorder)) {
         val cellPx = cellSize.toPx()

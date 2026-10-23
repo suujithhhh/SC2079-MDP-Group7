@@ -24,25 +24,15 @@ class Task2ViewModel : ViewModel() {
         _uiState.update { it.copy(task2Obs2Length = (it.task2Obs2Length + delta).coerceIn(30, 100)) }
     }
 
-    fun updateRobotPoseDistance(xCm: Float, yCm: Float, headingDeg: Float) {
-        _uiState.update {
-            it.copy(
-                task2RobotXCm = xCm,
-                task2RobotYCm = yCm,
-                task2RobotHeadingDeg = headingDeg
-            )
-        }
-    }
-
     fun updateTargetInfo(obstacleId: Int, targetId: Int, imageUrl: String?) {
         _uiState.update { state ->
             val t2Obs1Target = if (obstacleId == 1) targetId else state.task2Obs1TargetId
             val t2Obs2Target = if (obstacleId == 2) targetId else state.task2Obs2TargetId
 
-            val t2Obs1Arrow = if (obstacleId == 1 && targetId in listOf(38, 39)) {
+            val t2Obs1Arrow = if ((obstacleId == 1) && (targetId in listOf(38, 39))) {
                 if (targetId == 38) ArrowDir.RIGHT else ArrowDir.LEFT
             } else state.task2Obs1Arrow
-            val t2Obs2Arrow = if (obstacleId == 2 && targetId in listOf(38, 39)) {
+            val t2Obs2Arrow = if ((obstacleId == 2) && (targetId in listOf(38, 39))) {
                 if (targetId == 38) ArrowDir.RIGHT else ArrowDir.LEFT
             } else state.task2Obs2Arrow
 
@@ -55,13 +45,21 @@ class Task2ViewModel : ViewModel() {
             val t2Obs1Image = if (obstacleId == 1) fullImageUrl else state.task2Obs1ImageUrl
             val t2Obs2Image = if (obstacleId == 2) fullImageUrl else state.task2Obs2ImageUrl
 
+            val newRobotStep = when {
+                (t2Obs1Target != null) && (t2Obs2Target != null) -> Task2RobotStep.END
+                obstacleId == 2 -> Task2RobotStep.AT_OBS_2
+                obstacleId == 1 -> Task2RobotStep.AT_OBS_1
+                else -> state.robotStep
+            }
+
             state.copy(
                 task2Obs1TargetId = t2Obs1Target,
                 task2Obs2TargetId = t2Obs2Target,
                 task2Obs1Arrow = t2Obs1Arrow,
                 task2Obs2Arrow = t2Obs2Arrow,
                 task2Obs1ImageUrl = t2Obs1Image,
-                task2Obs2ImageUrl = t2Obs2Image
+                task2Obs2ImageUrl = t2Obs2Image,
+                robotStep = newRobotStep,
             )
         }
     }
@@ -75,9 +73,7 @@ class Task2ViewModel : ViewModel() {
                 task2Obs2Arrow = null,
                 task2Obs1ImageUrl = null,
                 task2Obs2ImageUrl = null,
-                task2RobotXCm = null,
-                task2RobotYCm = null,
-                task2RobotHeadingDeg = null
+                robotStep = Task2RobotStep.START,
             )
         }
     }
