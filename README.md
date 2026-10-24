@@ -29,6 +29,11 @@ PROTOCOL.md            Wire formats, coordinates and robot geometry shared by al
 
 ## System overview
 
+![MDP overall system architecture](docs/system_architecture.webp)
+
+*This diagram shows the design concept. Its example messages are only illustrations;
+the exact commands and replies are in [`PROTOCOL.md`](PROTOCOL.md).*
+
 ```text
 Android ──Bluetooth SPP── RPi ──Wi-Fi / HTTP── Laptop planner (task1/algo)
                            │
