@@ -76,16 +76,16 @@ class PolicyAndInterface(unittest.TestCase):
     def test_production_values(self):
         policy = bp.PRODUCTION_POLICY
         self.assertEqual((policy.planning_target_s, policy.hard_stop_s, policy.request_ceiling_s),
-                         (67.0, 81.0, 90.0))
+                         (63.0, 66.0, 70.0))
         self.assertEqual((policy.verification_deadline_s, policy.return_target_s, policy.return_deadline_s),
-                         (86.0, 87.0, 88.0))
+                         (67.0, 67.5, 68.0))
 
     def test_invalid_chains_are_rejected(self):
-        for changes in ({"planning_target_s": 85.0}, {"hard_stop_s": 50.0},
+        for changes in ({"planning_target_s": 86.0}, {"hard_stop_s": 50.0},
                         {"verification_deadline_s": 76.0}, {"return_deadline_s": 86.0},
-                        {"return_deadline_s": 90.0}, {"request_ceiling_s": 80.0},
+                        {"return_deadline_s": 90.0}, {"request_ceiling_s": 60.0},
                         {"planning_target_s": float("nan")}, {"death_wait_s": 0},
-                        {"hard_stop_s": True}, {"min_search_budget_s": 67.0},
+                        {"hard_stop_s": True}, {"min_search_budget_s": 63.0},
                         {"tempdir_attempts": 0}):
             with self.assertRaises(ValueError, msg=str(changes)):
                 bp.ExecutionPolicy(**changes)
@@ -393,7 +393,7 @@ class Decisions(unittest.TestCase):
             self.assertEqual(run._accept(event).termination, bp.TERM_WORKER_FAILED)
 
     def test_precedence_final_then_cancel_then_hard_stop(self):
-        past_everything = lambda: 88.0          # after R0 + 81 s
+        past_everything = lambda: 88.0          # after R0 + 66 s
         cancel = threading.Event()
         cancel.set()
         # nothing received: an external cancel outranks the hard stop

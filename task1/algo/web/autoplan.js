@@ -11,7 +11,7 @@
  *   one bounded protocol-v2 request is sent with fixed values (B3, grid units,
  *   no alternative viewing, STANDARD, a `web-auto-...` mission ID).
  * - The countdown is client-side and lies outside the server's request
- *   window. The bounded request itself returns within its server-owned 90 s
+ *   window. The bounded request itself returns within its server-owned 70 s
  *   window after the server accepts it.
  * - One request in flight at a time. An edit during planning marks that
  *   response stale (it is never shown) and queues one follow-up for the newest
@@ -46,9 +46,9 @@ export const AUTO_PLAN_IDLE_MS = 5000;
 /** The STM motion profile this page requests by name (never left to the
  * server default, so the page's own plans do not depend on it). */
 export const AUTO_MOTION_PROFILE = 'STANDARD';
-/** Browser-side abort: the server's 90 s ceiling plus 5 s of transport margin
+/** Browser-side abort: the server's 70 s ceiling plus 5 s of transport margin
  * (the same margin `rpi_test_client_v2.py` uses). */
-export const BROWSER_TIMEOUT_MS = 95000;
+export const BROWSER_TIMEOUT_MS = 75000;
 export const POLL_PLANNING_MS = 1000;
 export const POLL_IDLE_MS = 2500;
 /** Pause after a response before a queued follow-up is sent, so the server
@@ -60,10 +60,10 @@ export const FACES = ['N', 'E', 'S', 'W'];
 const HEADING_LETTER_BY_DEG = { 0: 'E', 90: 'N', 180: 'W', 270: 'S' };
 
 export const PLANNING_TEXT = (seconds) =>
-  `Planning… ${seconds} s · target ≈67 s · hard stop 81 s · reply by 90 s`;
+  `Planning… ${seconds} s · target ≈63 s · hard stop 66 s · reply by 70 s`;
 export const COUNTDOWN_TEXT = (seconds) => `Planning starts in ${seconds} s — keep editing to postpone`;
 export const WINDOW_NOTE =
-  'The bounded request returns within its server-owned 90 s window after the server accepts it; '
+  'The bounded request returns within its server-owned 70 s window after the server accepts it; '
   + 'the 5 s editing countdown is not part of that window.';
 
 // ---------------------------------------------------------------------------

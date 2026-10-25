@@ -10,8 +10,8 @@ always uses the bounded executor.
 Experimental scope -- read before treating this as production-ready
 ----------------------------------------------------------------------
 This endpoint accepts **1-8 obstacles**. The bounded executor targets planning
-by R0+67s, kills the contained worker tree at R0+81s, withholds anything
-assembled after R0+88s, and reserves the R0+90s HTTP ceiling. It returns only
+by R0+63s, kills the contained worker tree at R0+66s, withholds anything
+assembled after R0+68s, and reserves the R0+70s HTTP ceiling. It returns only
 a complete independently verified route or a clear non-executable failure;
 partial geometry never crosses this boundary. Bounded validation passed the
 tested 6-8 obstacle cases, containment and soak cases, but the original 4-8

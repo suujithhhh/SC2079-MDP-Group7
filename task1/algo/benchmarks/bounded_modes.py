@@ -9,7 +9,7 @@ are used unchanged; nothing here changes planner behaviour.
 
 Timing is chosen by a server-side policy name, never by a request field:
 
-    production   `bounded_prefix_planning.PRODUCTION_POLICY` (67/81/86/87/88/90 s)
+    production   `bounded_prefix_planning.PRODUCTION_POLICY` (63/66/67/67.5/68/70 s)
     stress       `ExecutionPolicy(5, 10, 15, 17, 18, 20)`: forces early stops to
                  exercise retention and cleanup; never timing evidence (G5/G6)
 

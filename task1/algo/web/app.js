@@ -460,7 +460,7 @@ function updateStatsV2() {
         : `Partial route. ${result.failure_reason || ''} Skipped obstacles: ${skipped.join(', ') || 'none'}.`
       : result.error || ''
     : state.submitting && state.v2.pendingMissionId
-      ? 'Planning… the bounded planner replies within about 90 seconds.'
+      ? 'Planning… the bounded planner replies within about 70 seconds.'
       : 'Configure obstacles and run the planner.';
   $('resultMessage').className = result && !result.valid ? 'error' : 'help';
 }
@@ -714,7 +714,7 @@ async function runPlanV2(mode) {
   state.v2.planningStatus = 'planning';
   state.v2.notice = null;
   $('resultMessage').className = 'help';
-  $('resultMessage').textContent = 'Planning… the bounded planner replies within about 90 seconds.';
+  $('resultMessage').textContent = 'Planning… the bounded planner replies within about 70 seconds.';
   updateControls();
   updateStatsV2();
 

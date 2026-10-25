@@ -214,9 +214,10 @@ requests carry no client-controlled budget or deadline field. The `bounded`
 campaign (`bpb2`/`bpb3`, below) measures it, but no campaign has been run yet, so
 these remain targets to be judged against measurements.
 
-Update (2026-10-05): the production policy in `bounded_prefix_planning.py` is now
-67/81/86/87/88/90 s (target, hard stop, verification, return target, return
-deadline, ceiling); it was 60/74/79/80/81/83 s from 2026-10-04. The numbers and gates in this file were set or measured under
+Update (2026-10-07): the production policy in `bounded_prefix_planning.py` is now
+63/66/67/67.5/68/70 s (target, hard stop, verification, return target, return
+deadline, ceiling); it was 67/81/86/87/88/90 s from 2026-10-05 to 2026-10-07 and 60/74/79/80/81/83 s
+from 2026-10-04. The numbers and gates in this file were set or measured under
 the earlier 30/45/55/57/58/60 s policy and have not been re-run.
 
 ## Prefix-search validation (`pb2` / `pb3`)

@@ -5,18 +5,18 @@ worker process (`prefix_worker.py`) and enforces three deadlines, all measured
 from `R0`, the instant the PC accepted the request (`accepted_at`, the parent's
 `time.monotonic()`):
 
-    R0 + 67 s   planning target. Worker start-up counts. The parent sends the
+    R0 + 63 s   planning target. Worker start-up counts. The parent sends the
                 worker what is left of it (`search_budget_s`) so the search
                 stops starting new legs; a leg already running may continue.
-    R0 + 81 s   hard stop. The whole worker process tree is terminated.
-    R0 + 90 s   request ceiling for the future HTTP adapter. `plan()` targets
-                R0 + 87 s; an outcome assembled after R0 + 88 s is withheld.
+    R0 + 66 s   hard stop. The whole worker process tree is terminated.
+    R0 + 70 s   request ceiling for the future HTTP adapter. `plan()` targets
+                R0 + 67.5 s; an outcome assembled after R0 + 68 s is withheld.
 
 `planning_service_v2.py` is the live experimental adapter: it captures `R0`,
 accepts 1-8 obstacles, calls `plan()` and serializes only a deliverable complete
 route. All timing is server-owned (`ExecutionPolicy`); no request field can
-reach it. The adapter's response-write margin is the gap from the 88 s delivery
-deadline to the 90 s request ceiling.
+reach it. The adapter's response-write margin is the gap from the 68 s delivery
+deadline to the 70 s request ceiling.
 
 Safe incumbents
 ---------------
@@ -34,9 +34,9 @@ Stop taxonomy (one `termination`, plus separate cleanup and delivery facts)
     search_finished        the planner stopped itself: exhausted / bound closed /
                            first complete route (B2)
     planner_work_limit     a deterministic planner limit
-    planner_budget         the planner's between-leg checkpoint (R0 + 67 s)
+    planner_budget         the planner's between-leg checkpoint (R0 + 63 s)
     cancelled              external cancel, acknowledged or escalated to a kill
-    hard_backstop          the parent terminated the worker at R0 + 81 s
+    hard_backstop          the parent terminated the worker at R0 + 66 s
     startup_overran_budget the worker was not ready in time: no search ran
     worker_failed          crash, protocol violation, or no verifiable route
     executor_failed        containment failed or the executor is unhealthy
@@ -59,7 +59,7 @@ delivered (`deliverable=False`; a verified route is kept only as
 returns `executor_failed` until the process is restarted. The temporary
 directory is deleted only after the tree is verified dead.
 
-A late return is different: if `plan()` finishes after `R0 + 88 s` with
+A late return is different: if `plan()` finishes after `R0 + 68 s` with
 containment, death and cleanup all verified, the route is withheld
 (`deliverable=False`, `delivery="request_ceiling_exceeded"`, route only in
 `diagnostic_route`) but the executor stays healthy, because nothing is left
@@ -180,15 +180,15 @@ class ExecutionPolicy:
     """Server-side timing. Every offset is seconds after `R0`. Immutable and
     validated; nothing in a request can construct or modify one."""
 
-    planning_target_s: float = 67.0
-    hard_stop_s: float = 81.0
-    verification_deadline_s: float = 86.0
-    return_target_s: float = 87.0
-    return_deadline_s: float = 88.0
-    request_ceiling_s: float = 90.0
+    planning_target_s: float = 63.0
+    hard_stop_s: float = 66.0
+    verification_deadline_s: float = 67.0
+    return_target_s: float = 67.5
+    return_deadline_s: float = 68.0
+    request_ceiling_s: float = 70.0
     startup_margin_s: float = 0.1          # pipe transit allowance when computing the SPEC budget
     min_search_budget_s: float = 1.0       # less than this left at SPEC: run no search
-    death_wait_s: float = 5.0              # verifying worker-tree death after the kill
+    death_wait_s: float = 1.0              # verifying worker-tree death after the kill (measured ~0.01 s)
     finish_grace_s: float = 2.0            # worker's own exit after a valid FINAL
     cancel_grace_s: float = 2.0            # worker's time to acknowledge CANCEL
     tempdir_attempts: int = 3

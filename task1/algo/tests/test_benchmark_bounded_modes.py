@@ -62,7 +62,7 @@ class Options(unittest.TestCase):
         self.assertEqual((stress.planning_target_s, stress.hard_stop_s, stress.verification_deadline_s,
                           stress.return_target_s, stress.return_deadline_s, stress.request_ceiling_s),
                          (5.0, 10.0, 15.0, 17.0, 18.0, 20.0))
-        self.assertEqual(bm.policy_record("production")["hard_stop_s"], 81.0)
+        self.assertEqual(bm.policy_record("production")["hard_stop_s"], 66.0)
         with self.assertRaises(ValueError):
             bm.policy_for("fast")
 
@@ -81,7 +81,7 @@ class Options(unittest.TestCase):
         self.assertEqual(bm.resolve_timeout(None, "production", None), (90.0, None))
         self.assertIn("explicit", bm.resolve_timeout(None, "stress", 8)[1])
         self.assertEqual(bm.resolve_timeout(420, "stress", 8), (420.0, None))
-        self.assertIn("request ceiling", bm.resolve_timeout(82, "production", None)[1])
+        self.assertIn("request ceiling", bm.resolve_timeout(62, "production", None)[1])
         self.assertIn("request ceiling", bm.resolve_timeout(150, "stress", 8)[1])
         self.assertIn("maximum", bm.resolve_timeout(601, "production", None)[1])
         self.assertIn("finite", bm.resolve_timeout(float("inf"), "production", None)[1])

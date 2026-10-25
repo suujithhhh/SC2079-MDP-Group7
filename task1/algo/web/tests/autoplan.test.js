@@ -158,10 +158,10 @@ describe('inactivity countdown', () => {
     assert.equal(payload.allow_alternative_viewing, false);
     assert.equal(payload.motion_profile, 'STANDARD');
     assert.match(payload.mission_id, /^web-auto-/);
-    assert.equal(ctl.view().status.text, 'Planning… 0 s · target ≈67 s · hard stop 81 s · reply by 90 s');
+    assert.equal(ctl.view().status.text, 'Planning… 0 s · target ≈63 s · hard stop 66 s · reply by 70 s');
     await clock.advance(12_000);
-    assert.equal(ctl.view().status.text, 'Planning… 12 s · target ≈67 s · hard stop 81 s · reply by 90 s');
-    assert.match(ctl.view().status.detail, /server-owned 90 s window after the server accepts it/);
+    assert.equal(ctl.view().status.text, 'Planning… 12 s · target ≈63 s · hard stop 66 s · reply by 70 s');
+    assert.match(ctl.view().status.detail, /server-owned 70 s window after the server accepts it/);
     assert.equal(server.posts.length, 1);
     ctl.dispose();
   });
@@ -811,7 +811,7 @@ describe('external missions and reloads', () => {
     await clock.advance(BROWSER_TIMEOUT_MS);
     const { shown } = ctl.view();
     assert.equal(shown.kind, 'failure');
-    assert.match(shown.message, /No reply from the planner within 95 s, and \/state\/v2 holds no finished result/);
+    assert.match(shown.message, /No reply from the planner within 75 s, and \/state\/v2 holds no finished result/);
     await clock.advance(AUTO_PLAN_IDLE_MS * 4);
     assert.equal(server.posts.length, 1);
     ctl.dispose();

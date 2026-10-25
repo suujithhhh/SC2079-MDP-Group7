@@ -77,7 +77,7 @@ def profile_echo_error(response: dict[str, Any], sent_profile: str) -> str | Non
     return None
 
 
-def send_plan_v2(url: str, payload: Any, timeout: float = 95.0) -> tuple[int, dict[str, Any]]:
+def send_plan_v2(url: str, payload: Any, timeout: float = 75.0) -> tuple[int, dict[str, Any]]:
     """POST one bounded protocol-v2 request.
 
     The server owns a 90-second ceiling; five seconds of client-side margin
@@ -114,8 +114,8 @@ def main() -> None:
     parser.add_argument("--mode", choices=("B2", "B3"), default=None,
                          help="set the request mode; omit to leave the payload as-is "
                               "(built-in request: B3, the team default, which uses the "
-                              "whole 67 s search, so it takes over a minute; B2 is fast)")
-    parser.add_argument("--timeout", type=float, default=95.0)
+                              "whole 63 s search, so it takes over a minute; B2 is fast)")
+    parser.add_argument("--timeout", type=float, default=75.0)
     parser.add_argument("--full", action="store_true",
                          help="print the full response including waypoints/actions")
     args = parser.parse_args()
